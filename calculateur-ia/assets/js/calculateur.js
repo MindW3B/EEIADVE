@@ -192,15 +192,6 @@ $('resetBtn').addEventListener('click',function(){
   renderUcs(); update();
 });
 
-/* ---------- Thème ---------- */
-var root=document.documentElement;
-try{ var th=localStorage.getItem(KEY+'-theme'); if(th) root.setAttribute('data-theme',th); }catch(e){}
-$('themeBtn').addEventListener('click',function(){
-  var cur=root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
-  var nx=cur==='dark'?'light':'dark'; root.setAttribute('data-theme',nx);
-  try{ localStorage.setItem(KEY+'-theme',nx); }catch(e){}
-});
-
 /* ---------- Méthode : tout déplier / replier ---------- */
 var mDet=document.querySelectorAll('.method details');
 function syncToggle(){
