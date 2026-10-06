@@ -103,34 +103,82 @@
   </div>
 
   <section class="method" aria-labelledby="h-m">
-    <h2 id="h-m">Méthode</h2>
-    <p>Le calcul part de la quantité de calcul nécessaire pour traiter chaque token, puis remonte jusqu'à l'électricité, au carbone et à l'eau. <b>Un token coûte environ 2 opérations par paramètre actif du modèle.</b> Ce volume de calcul est converti en temps de GPU (référence NVIDIA H100 : 989 TFLOPS en BF16 dense, 700 W), selon un taux d'utilisation réaliste : faible pour la génération des tokens de sortie, plus élevé pour la lecture des tokens d'entrée.</p>
-    <p>À cette consommation du GPU s'ajoutent le reste du serveur (CPU, mémoire, réseau), les machines en veille gardées en réserve pour absorber les pics, puis le refroidissement et le bâtiment via le PUE. La répartition entre ces postes suit celle publiée par Google en 2025 pour ses propres services. L'électricité est convertie en carbone avec l'intensité du réseau électrique de la région d'hébergement, et en eau avec l'eau consommée sur site (WUE) plus l'eau consommée pour produire l'électricité.</p>
-    <p>La fabrication du matériel est amortie au temps de GPU utilisé. L'entraînement du modèle est ajouté sous forme de forfait, faute de données publiques fiables sur le nombre de requêtes servies par modèle.</p>
-    <div class="tbl">
-      <table>
-        <thead><tr><th>Hypothèse</th><th class="n">Basse</th><th class="n">Centrale</th><th class="n">Haute</th></tr></thead>
-        <tbody>
-          <tr><td>Paramètres actifs des modèles fermés</td><td class="n">bas de fourchette</td><td class="n">milieu</td><td class="n">haut de fourchette</td></tr>
-          <tr><td>Utilisation GPU en génération (sortie)</td><td class="n">15 %</td><td class="n">10 %</td><td class="n">6 %</td></tr>
-          <tr><td>Utilisation GPU en lecture (entrée)</td><td class="n">45 %</td><td class="n">35 %</td><td class="n">25 %</td></tr>
-          <tr><td>Fabrication d'un serveur 8 GPU (kg CO₂e)</td><td class="n">1 500</td><td class="n">2 500</td><td class="n">4 000</td></tr>
-          <tr><td>Forfait entraînement amorti</td><td class="n">+5 %</td><td class="n">+15 %</td><td class="n">+40 %</td></tr>
-        </tbody>
-      </table>
+    <div class="m-head">
+      <h2 id="h-m">Méthode</h2>
+      <button type="button" class="btn ghost" id="mToggle" aria-pressed="false">Tout déplier</button>
     </div>
-    <p><b>Repères publiés pour contrôler les ordres de grandeur.</b> Google indique 0,24 Wh, 0,03 g CO₂e et 0,26 mL d'eau pour une requête texte médiane sur Gemini (août 2025, avec son mix électrique décarboné par contrats). OpenAI annonce environ 0,34 Wh pour une requête ChatGPT moyenne (juin 2025). L'analyse de cycle de vie de Mistral Large 2, menée avec Carbone 4 et l'ADEME, donne 1,14 g CO₂e et 45 mL d'eau pour une réponse de 400 tokens, entraînement inclus (juillet 2025).</p>
-    <p><b>Hors périmètre de cette version :</b> terminaux des utilisateurs, réseau internet, front applicatif de l'entreprise, eau liée à la fabrication du matériel, génération d'images, de son et de vidéo. Le coût supplémentaire de l'attention sur les très longs contextes n'est pas modélisé, ce qui sous-estime un peu les usages au-delà de 50 000 tokens d'entrée.</p>
-    <p><b>Sources :</b></p>
-    <ul class="refs">
-      <li>Kaplan et al., Scaling Laws for Neural Language Models, 2020 (coût de calcul par token).</li>
-      <li>NVIDIA, fiche technique H100 SXM ; Epoch AI, travaux sur l'efficacité énergétique du calcul.</li>
-      <li>Google, Measuring the environmental impact of delivering AI at Google scale, août 2025 ; Google Environmental Report 2025 (PUE, eau).</li>
-      <li>Mistral AI, ADEME et Carbone 4, analyse de cycle de vie de Mistral Large 2, juillet 2025.</li>
-      <li>Rapports environnementaux d'AWS et de Microsoft (PUE et WUE) ; Uptime Institute, Global Data Center Survey 2024 (PUE moyen).</li>
-      <li>Li et al., Making AI Less Thirsty, 2023 (eau consommée pour produire l'électricité).</li>
-    </ul>
-    <p>Le périmètre (inférence, entrée, embedding, infrastructure hors GPU, fabrication, entraînement) s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavestone) et d'EcoLogits. Les formules, paramètres et données de cet outil ont été établis séparément à partir des sources ci-dessus.</p>
+
+    <details class="m-sec">
+      <summary>Principe du calcul</summary>
+      <div class="m-body">
+        <details class="m-sub">
+          <summary>Du token au temps de GPU</summary>
+          <p>Le calcul part de la quantité de calcul nécessaire pour traiter chaque token, puis remonte jusqu'à l'électricité, au carbone et à l'eau. <b>Un token coûte environ 2 opérations par paramètre actif du modèle.</b> Ce volume de calcul est converti en temps de GPU (référence NVIDIA H100 : 989 TFLOPS en BF16 dense, 700 W), selon un taux d'utilisation réaliste : faible pour la génération des tokens de sortie, plus élevé pour la lecture des tokens d'entrée.</p>
+        </details>
+        <details class="m-sub">
+          <summary>Serveur, refroidissement, carbone et eau</summary>
+          <p>À cette consommation du GPU s'ajoutent le reste du serveur (CPU, mémoire, réseau), les machines en veille gardées en réserve pour absorber les pics, puis le refroidissement et le bâtiment via le PUE. La répartition entre ces postes suit celle publiée par Google en 2025 pour ses propres services. L'électricité est convertie en carbone avec l'intensité du réseau électrique de la région d'hébergement, et en eau avec l'eau consommée sur site (WUE) plus l'eau consommée pour produire l'électricité.</p>
+        </details>
+        <details class="m-sub">
+          <summary>Fabrication du matériel et entraînement</summary>
+          <p>La fabrication du matériel est amortie au temps de GPU utilisé. L'entraînement du modèle est ajouté sous forme de forfait, faute de données publiques fiables sur le nombre de requêtes servies par modèle.</p>
+        </details>
+      </div>
+    </details>
+
+    <details class="m-sec">
+      <summary>Hypothèses et fourchettes</summary>
+      <div class="m-body">
+        <div class="tbl">
+          <table>
+            <thead><tr><th>Hypothèse</th><th class="n">Basse</th><th class="n">Centrale</th><th class="n">Haute</th></tr></thead>
+            <tbody>
+              <tr><td>Paramètres actifs des modèles fermés</td><td class="n">bas de fourchette</td><td class="n">milieu</td><td class="n">haut de fourchette</td></tr>
+              <tr><td>Utilisation GPU en génération (sortie)</td><td class="n">15 %</td><td class="n">10 %</td><td class="n">6 %</td></tr>
+              <tr><td>Utilisation GPU en lecture (entrée)</td><td class="n">45 %</td><td class="n">35 %</td><td class="n">25 %</td></tr>
+              <tr><td>Fabrication d'un serveur 8 GPU (kg CO₂e)</td><td class="n">1 500</td><td class="n">2 500</td><td class="n">4 000</td></tr>
+              <tr><td>Forfait entraînement amorti</td><td class="n">+5 %</td><td class="n">+15 %</td><td class="n">+40 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+
+    <details class="m-sec">
+      <summary>Repères publiés pour contrôler les ordres de grandeur</summary>
+      <div class="m-body">
+        <p>Google indique 0,24 Wh, 0,03 g CO₂e et 0,26 mL d'eau pour une requête texte médiane sur Gemini (août 2025, avec son mix électrique décarboné par contrats). OpenAI annonce environ 0,34 Wh pour une requête ChatGPT moyenne (juin 2025). L'analyse de cycle de vie de Mistral Large 2, menée avec Carbone 4 et l'ADEME, donne 1,14 g CO₂e et 45 mL d'eau pour une réponse de 400 tokens, entraînement inclus (juillet 2025).</p>
+      </div>
+    </details>
+
+    <details class="m-sec">
+      <summary>Hors périmètre de cette version</summary>
+      <div class="m-body">
+        <p>Terminaux des utilisateurs, réseau internet, front applicatif de l'entreprise, eau liée à la fabrication du matériel, génération d'images, de son et de vidéo. Le coût supplémentaire de l'attention sur les très longs contextes n'est pas modélisé, ce qui sous-estime un peu les usages au-delà de 50 000 tokens d'entrée.</p>
+      </div>
+    </details>
+
+    <details class="m-sec">
+      <summary>Sources et inspirations</summary>
+      <div class="m-body">
+        <details class="m-sub">
+          <summary>Sources</summary>
+          <ul class="refs">
+            <li>Kaplan et al., Scaling Laws for Neural Language Models, 2020 (coût de calcul par token).</li>
+            <li>NVIDIA, fiche technique H100 SXM ; Epoch AI, travaux sur l'efficacité énergétique du calcul.</li>
+            <li>Google, Measuring the environmental impact of delivering AI at Google scale, août 2025 ; Google Environmental Report 2025 (PUE, eau).</li>
+            <li>Mistral AI, ADEME et Carbone 4, analyse de cycle de vie de Mistral Large 2, juillet 2025.</li>
+            <li>Rapports environnementaux d'AWS et de Microsoft (PUE et WUE) ; Uptime Institute, Global Data Center Survey 2024 (PUE moyen).</li>
+            <li>Li et al., Making AI Less Thirsty, 2023 (eau consommée pour produire l'électricité).</li>
+          </ul>
+        </details>
+        <details class="m-sub">
+          <summary>Inspirations</summary>
+          <p>Le périmètre (inférence, entrée, embedding, infrastructure hors GPU, fabrication, entraînement) s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavestone) et d'EcoLogits. Les formules, paramètres et données de cet outil ont été établis séparément à partir des sources ci-dessus.</p>
+        </details>
+      </div>
+    </details>
+
     <p class="foot">Méthode Mind W3B v1, octobre 2026. Les tailles des modèles fermés sont des estimations, et les valeurs d'intensité carbone et d'eau sont des ordres de grandeur à remplacer par les données de votre fournisseur quand elles existent. Vos saisies restent dans ce navigateur.</p>
   </section>
 </div>

@@ -283,5 +283,19 @@ $('themeBtn').addEventListener('click',function(){
   try{ localStorage.setItem(KEY+'-theme',nx); }catch(e){}
 });
 
+/* ---------- Méthode : tout déplier / replier ---------- */
+var mDet=document.querySelectorAll('.method details');
+function syncToggle(){
+  var all=Array.prototype.every.call(mDet,function(d){return d.open;});
+  $('mToggle').textContent=all?'Tout replier':'Tout déplier';
+  $('mToggle').setAttribute('aria-pressed',all?'true':'false');
+}
+$('mToggle').addEventListener('click',function(){
+  var open=$('mToggle').getAttribute('aria-pressed')!=='true';
+  Array.prototype.forEach.call(mDet,function(d){d.open=open;});
+  syncToggle();
+});
+Array.prototype.forEach.call(mDet,function(d){d.addEventListener('toggle',syncToggle);});
+
 renderUcs(); update();
 })();
