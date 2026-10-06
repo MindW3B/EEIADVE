@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculateur d'empreinte environnementale de l'IA | Mind W3B</title>
+<meta name="description" content="Estimez l'énergie, le carbone et l'eau consommés par les usages d'IA générative de votre entreprise, avec des fourchettes et des leviers d'optimisation. Outil gratuit de Mind W3B.">
+<meta name="theme-color" content="#07051a">
+<link rel="canonical" href="https://calculateur.mindw3b.co/">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="Mind W3B">
+<meta property="og:title" content="Quelle est l'empreinte environnementale de l'IA dans votre entreprise ?">
+<meta property="og:description" content="Énergie, carbone et eau de vos usages d'IA générative, avec des fourchettes honnêtes et les leviers pour les réduire.">
+<meta property="og:url" content="https://calculateur.mindw3b.co/">
+<meta property="og:image" content="https://calculateur.mindw3b.co/assets/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" sizes="64x64" href="assets/img/favicon.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <img src="assets/img/logo-mindw3b.png" width="52" height="51" alt="Logo Mind W3B">
+    <div>
+      <p class="brand">Mind W3B, audit de performance IA</p>
+      <h1>Empreinte environnementale de l'IA dans votre entreprise</h1>
+      <p class="lede">Décrivez vos usages d'IA générative. Le calcul donne l'énergie, le carbone et l'eau consommés, avec une fourchette basse et haute, car les fournisseurs ne publient pas la taille de leurs modèles.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Thème</button>
+  </header>
+
+  <div class="grid">
+    <main>
+      <section class="block" aria-labelledby="h-uc">
+        <h2 id="h-uc">Vos usages</h2>
+        <p class="sub">Un bloc par usage : assistant interne, support client, génération de code… Les volumes sont mensuels.</p>
+        <div id="ucList"></div>
+        <button class="add" id="addUc" type="button">Ajouter un usage</button>
+      </section>
+
+      <section class="block" aria-labelledby="h-lev">
+        <h2 id="h-lev">Leviers d'optimisation</h2>
+        <p class="sub">Testez l'effet des pistes d'un audit sur l'empreinte totale.</p>
+        <div class="levers">
+          <div class="lever">
+            <label for="lvIn">Réduire les tokens d'entrée</label><output id="oIn" for="lvIn">0 %</output>
+            <input type="range" id="lvIn" min="0" max="80" step="5" value="0">
+            <small>Mise en cache du contexte, prompts plus courts, RAG mieux ciblé.</small>
+          </div>
+          <div class="lever">
+            <label for="lvOut">Réduire les tokens de sortie</label><output id="oOut" for="lvOut">0 %</output>
+            <input type="range" id="lvOut" min="0" max="60" step="5" value="0">
+            <small>Réponses plus concises, raisonnement limité aux tâches qui en ont besoin.</small>
+          </div>
+          <div class="lever">
+            <label for="lvRoute">Router vers un modèle léger</label><output id="oRoute" for="lvRoute">0 %</output>
+            <input type="range" id="lvRoute" min="0" max="90" step="5" value="0">
+            <small>Part des requêtes simples envoyées à un modèle de classe légère.</small>
+          </div>
+          <p class="gain" id="gain">Aucun levier activé.</p>
+        </div>
+      </section>
+
+      <details class="hyp">
+        <summary>Hypothèses techniques modifiables</summary>
+        <div class="fields" id="hypFields"></div>
+        <p class="sub" style="margin:12px 0 0">Valeurs centrales. Les fourchettes basse et haute sont décrites dans la méthode en bas de page.</p>
+      </details>
+    </main>
+
+    <aside class="res" aria-labelledby="h-res" aria-live="polite">
+      <h2 id="h-res">Empreinte estimée</h2>
+      <div class="period" role="group" aria-label="Période">
+        <button type="button" data-p="1" aria-pressed="true">Par mois</button>
+        <button type="button" data-p="12" aria-pressed="false">Par an</button>
+      </div>
+      <div class="kpi"><p class="lab">Émissions de gaz à effet de serre</p><p class="big num" id="kCo2">—</p><div class="range" id="rCo2"><div class="seg"></div><div class="dot"></div></div><div class="range-lab num"><span id="lCo2"></span><span id="hCo2"></span></div></div>
+      <div class="kpi"><p class="lab">Électricité consommée</p><p class="big num" id="kE">—</p><div class="range" id="rE"><div class="seg"></div><div class="dot"></div></div><div class="range-lab num"><span id="lE"></span><span id="hE"></span></div></div>
+      <div class="kpi"><p class="lab">Eau consommée (site et production d'électricité)</p><p class="big num" id="kW">—</p><div class="range" id="rW"><div class="seg"></div><div class="dot"></div></div><div class="range-lab num"><span id="lW"></span><span id="hW"></span></div></div>
+      <p class="per" id="perReq"></p>
+      <p class="equiv" id="equiv"></p>
+
+      <h3>D'où viennent les émissions</h3>
+      <div class="stack" id="stack"></div>
+      <ul class="legend" id="legend"></ul>
+
+      <div class="actions">
+        <button class="btn" id="copyBtn" type="button">Copier la synthèse</button>
+        <button class="btn ghost" id="resetBtn" type="button">Réinitialiser</button>
+      </div>
+      <p class="note-ok" id="copyNote"></p>
+    </aside>
+  </div>
+
+  <section class="method" aria-labelledby="h-m">
+    <h2 id="h-m">Méthode</h2>
+    <p>Le calcul part de la quantité de calcul nécessaire pour traiter chaque token, puis remonte jusqu'à l'électricité, au carbone et à l'eau. <b>Un token coûte environ 2 opérations par paramètre actif du modèle.</b> Ce volume de calcul est converti en temps de GPU (référence NVIDIA H100 : 989 TFLOPS en BF16 dense, 700 W), selon un taux d'utilisation réaliste : faible pour la génération des tokens de sortie, plus élevé pour la lecture des tokens d'entrée.</p>
+    <p>À cette consommation du GPU s'ajoutent le reste du serveur (CPU, mémoire, réseau), les machines en veille gardées en réserve pour absorber les pics, puis le refroidissement et le bâtiment via le PUE. La répartition entre ces postes suit celle publiée par Google en 2025 pour ses propres services. L'électricité est convertie en carbone avec l'intensité du réseau électrique de la région d'hébergement, et en eau avec l'eau consommée sur site (WUE) plus l'eau consommée pour produire l'électricité.</p>
+    <p>La fabrication du matériel est amortie au temps de GPU utilisé. L'entraînement du modèle est ajouté sous forme de forfait, faute de données publiques fiables sur le nombre de requêtes servies par modèle.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Hypothèse</th><th class="n">Basse</th><th class="n">Centrale</th><th class="n">Haute</th></tr></thead>
+        <tbody>
+          <tr><td>Paramètres actifs des modèles fermés</td><td class="n">bas de fourchette</td><td class="n">milieu</td><td class="n">haut de fourchette</td></tr>
+          <tr><td>Utilisation GPU en génération (sortie)</td><td class="n">15 %</td><td class="n">10 %</td><td class="n">6 %</td></tr>
+          <tr><td>Utilisation GPU en lecture (entrée)</td><td class="n">45 %</td><td class="n">35 %</td><td class="n">25 %</td></tr>
+          <tr><td>Fabrication d'un serveur 8 GPU (kg CO₂e)</td><td class="n">1 500</td><td class="n">2 500</td><td class="n">4 000</td></tr>
+          <tr><td>Forfait entraînement amorti</td><td class="n">+5 %</td><td class="n">+15 %</td><td class="n">+40 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><b>Repères publiés pour contrôler les ordres de grandeur.</b> Google indique 0,24 Wh, 0,03 g CO₂e et 0,26 mL d'eau pour une requête texte médiane sur Gemini (août 2025, avec son mix électrique décarboné par contrats). OpenAI annonce environ 0,34 Wh pour une requête ChatGPT moyenne (juin 2025). L'analyse de cycle de vie de Mistral Large 2, menée avec Carbone 4 et l'ADEME, donne 1,14 g CO₂e et 45 mL d'eau pour une réponse de 400 tokens, entraînement inclus (juillet 2025).</p>
+    <p><b>Hors périmètre de cette version :</b> terminaux des utilisateurs, réseau internet, front applicatif de l'entreprise, eau liée à la fabrication du matériel, génération d'images, de son et de vidéo. Le coût supplémentaire de l'attention sur les très longs contextes n'est pas modélisé, ce qui sous-estime un peu les usages au-delà de 50 000 tokens d'entrée.</p>
+    <p><b>Sources :</b></p>
+    <ul class="refs">
+      <li>Kaplan et al., Scaling Laws for Neural Language Models, 2020 (coût de calcul par token).</li>
+      <li>NVIDIA, fiche technique H100 SXM ; Epoch AI, travaux sur l'efficacité énergétique du calcul.</li>
+      <li>Google, Measuring the environmental impact of delivering AI at Google scale, août 2025 ; Google Environmental Report 2025 (PUE, eau).</li>
+      <li>Mistral AI, ADEME et Carbone 4, analyse de cycle de vie de Mistral Large 2, juillet 2025.</li>
+      <li>Rapports environnementaux d'AWS et de Microsoft (PUE et WUE) ; Uptime Institute, Global Data Center Survey 2024 (PUE moyen).</li>
+      <li>Li et al., Making AI Less Thirsty, 2023 (eau consommée pour produire l'électricité).</li>
+    </ul>
+    <p>Le périmètre (inférence, entrée, embedding, infrastructure hors GPU, fabrication, entraînement) s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavestone) et d'EcoLogits. Les formules, paramètres et données de cet outil ont été établis séparément à partir des sources ci-dessus.</p>
+    <p class="foot">Méthode Mind W3B v1, octobre 2026. Les tailles des modèles fermés sont des estimations, et les valeurs d'intensité carbone et d'eau sont des ordres de grandeur à remplacer par les données de votre fournisseur quand elles existent. Vos saisies restent dans ce navigateur.</p>
+  </section>
+</div>
+
+<script src="assets/js/calculateur.js" defer></script>
+</body>
+</html>
