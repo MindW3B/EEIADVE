@@ -8,6 +8,8 @@ Version simple pour les dirigeants.
 - Résultat annuel avec fourchette en échelle logarithmique, niveau de précision, équivalents parlants et gain possible en optimisant.
 - Détail électricité, eau et requêtes, et ouverture du mode expert prérempli avec les réponses.
 - L'ancien calculateur devient le mode expert, servi en `/expert`. Ses résultats sont inchangés.
+- Bouton « Version simple » dans l'en-tête du mode expert.
+- Thème sombre sur la version simple, avec un bouton dédié. Le choix est partagé avec le mode expert.
 - Formules et référentiels extraits dans `assets/js/moteur.js`, partagé par les deux pages.
 
 ## v1.0.0 (octobre 2026)

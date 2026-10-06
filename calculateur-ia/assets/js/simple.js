@@ -81,6 +81,17 @@ $('toExpert').addEventListener('click',function(e){
   window.location.href=this.getAttribute('href');
 });
 
+/* ---------- Thème (partagé avec le mode expert) ---------- */
+var THEME_KEY=KEY_EXPERT+'-theme', html=document.documentElement;
+function isDark(){ var t=html.getAttribute('data-theme'); return t? t==='dark' : matchMedia('(prefers-color-scheme: dark)').matches; }
+function syncTheme(){ $('themeBtn').setAttribute('aria-pressed',String(isDark())); }
+try{ var th=localStorage.getItem(THEME_KEY); if(th) html.setAttribute('data-theme',th); }catch(e){}
+syncTheme();
+$('themeBtn').addEventListener('click',function(){
+  var nx=isDark()?'light':'dark'; html.setAttribute('data-theme',nx); syncTheme();
+  try{ localStorage.setItem(THEME_KEY,nx); }catch(e){}
+});
+
 /* ---------- Résultat ---------- */
 function update(){
   syncButtons();
