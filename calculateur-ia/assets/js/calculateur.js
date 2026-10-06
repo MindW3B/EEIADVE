@@ -8,55 +8,8 @@
 var KEY='mw3b-empreinte-ia-v1';
 function $(id){return document.getElementById(id);}
 
-/* ---------- Référentiels ---------- */
-var MODELS=[
-  {id:'f-front',g:'Modèles fermés (taille estimée)',n:'Classe frontière (ex. Claude Opus, GPT-5, Gemini Pro)',p:[60,150,400]},
-  {id:'f-mid',g:'Modèles fermés (taille estimée)',n:'Classe intermédiaire (ex. Claude Sonnet, GPT-5 mini, Gemini Flash)',p:[20,50,120]},
-  {id:'f-small',g:'Modèles fermés (taille estimée)',n:'Classe légère (ex. Claude Haiku, GPT-5 nano, Gemini Flash-Lite)',p:[3,10,25]},
-  {id:'llama405',g:'Modèles ouverts (taille publiée)',n:'Llama 3.1 405B (dense)',p:[405,405,405]},
-  {id:'mlarge2',g:'Modèles ouverts (taille publiée)',n:'Mistral Large 2 (123B, dense)',p:[123,123,123]},
-  {id:'llama70',g:'Modèles ouverts (taille publiée)',n:'Llama 3.3 70B (dense)',p:[70,70,70]},
-  {id:'deepseek',g:'Modèles ouverts (taille publiée)',n:'DeepSeek V3 / R1 (671B, 37B actifs)',p:[37,37,37]},
-  {id:'mistral-small',g:'Modèles ouverts (taille publiée)',n:'Mistral Small 3 (24B, dense)',p:[24,24,24]},
-  {id:'qwen235',g:'Modèles ouverts (taille publiée)',n:'Qwen3 235B-A22B (22B actifs)',p:[22,22,22]},
-  {id:'llama8',g:'Modèles ouverts (taille publiée)',n:'Llama 3.1 8B (dense)',p:[8,8,8]},
-  {id:'gptoss120',g:'Modèles ouverts (taille publiée)',n:'gpt-oss-120b (5,1B actifs)',p:[5.1,5.1,5.1]},
-  {id:'gptoss20',g:'Modèles ouverts (taille publiée)',n:'gpt-oss-20b (3,6B actifs)',p:[3.6,3.6,3.6]},
-  {id:'custom',g:'Autre',n:'Personnalisé (paramètres actifs à saisir)',p:null}
-];
-var OPS=[
-  {id:'google',n:'Google Cloud',pue:1.09,wue:1.0},
-  {id:'aws',n:'AWS',pue:1.15,wue:0.15},
-  {id:'azure',n:'Microsoft Azure',pue:1.18,wue:0.30},
-  {id:'colo',n:'Datacenter moyen (colocation)',pue:1.56,wue:0.5},
-  {id:'onprem',n:'Salle serveur interne',pue:1.8,wue:0.3}
-];
-var GRIDS=[
-  {id:'us',n:'États-Unis (moyenne)',v:0.38},
-  {id:'fr',n:'France',v:0.05},
-  {id:'se',n:'Suède',v:0.04},
-  {id:'fi',n:'Finlande',v:0.08},
-  {id:'be',n:'Belgique',v:0.15},
-  {id:'nl',n:'Pays-Bas',v:0.30},
-  {id:'ie',n:'Irlande',v:0.30},
-  {id:'de',n:'Allemagne',v:0.38},
-  {id:'custom',n:'Valeur personnalisée',v:null}
-];
-var SC=[ // basse, centrale, haute
-  {uD:0.15,uP:0.45,emb:1500,train:0.05},
-  {uD:0.10,uP:0.35,emb:2500,train:0.15},
-  {uD:0.06,uP:0.25,emb:4000,train:0.40}
-];
-var HYP_DEF=[
-  {k:'peak',l:'Puissance de calcul GPU (TFLOPS)',v:989,s:1},
-  {k:'gpuW',l:'Puissance électrique GPU (W)',v:700,s:10},
-  {k:'host',l:'Facteur serveur hors GPU (CPU, RAM, réseau)',v:1.43,s:0.01},
-  {k:'idle',l:'Facteur machines en veille',v:1.17,s:0.01},
-  {k:'life',l:"Durée de vie d'un serveur (ans)",v:4,s:0.5},
-  {k:'ewif',l:"Eau pour produire 1 kWh (L)",v:3.0,s:0.1},
-  {k:'embP',l:"Taille du modèle d'embedding (Md de paramètres)",v:0.6,s:0.1},
-  {k:'car',l:'Voiture thermique (kg CO₂e/km)',v:0.2,s:0.01}
-];
+/* ---------- Référentiels et calcul : assets/js/moteur.js ---------- */
+var M=window.MW3B, MODELS=M.MODELS, OPS=M.OPS, GRIDS=M.GRIDS, HYP_DEF=M.HYP_DEF, num=M.num;
 
 function newUc(o){
   return Object.assign({name:'Nouvel usage',model:'f-mid',custom:20,users:50,rpd:5,days:21,inTok:1500,outTok:400,reasTok:0,embTok:0,op:'aws',grid:'us',gridCustom:0.1},o||{});
@@ -84,43 +37,8 @@ function fE(kwh){ return kwh>=1000? [sig(kwh/1000),'MWh'] : kwh>=1? [sig(kwh),'k
 function fC(kg){ return kg>=1000? [sig(kg/1000),'t CO₂e'] : kg>=1? [sig(kg),'kg CO₂e'] : [sig(kg*1000),'g CO₂e']; }
 function fW(l){ return l>=1000? [sig(l/1000),'m³'] : [sig(l),'L']; }
 function j(a){return a[0]+' '+a[1];}
-function num(v,def){ var x=parseFloat(v); return isNaN(x)||x<0?(def||0):x; }
 
-/* ---------- Calcul ---------- */
-function modelParams(uc,i){
-  var m=MODELS.find(function(x){return x.id===uc.model;})||MODELS[1];
-  return m.p? m.p[i] : Math.max(0.1,num(uc.custom,1));
-}
-function gpuSec(P,inT,outT,i,H){
-  var f=2*P*1e9, peak=H.peak*1e12;
-  return f*outT/(peak*SC[i].uD) + f*inT/(peak*SC[i].uP);
-}
-function compute(lv){
-  var H=state.hyp, out=[0,1,2].map(function(){return {e:0,c:0,w:0,req:0,parts:{gpu:0,srv:0,dc:0,fab:0,train:0},uc:[]};});
-  state.ucs.forEach(function(uc){
-    var op=OPS.find(function(o){return o.id===uc.op;})||OPS[1];
-    var g=GRIDS.find(function(o){return o.id===uc.grid;})||GRIDS[0];
-    var grid=g.v==null?num(uc.gridCustom,0):g.v;
-    var req=num(uc.users)*num(uc.rpd)*num(uc.days);
-    var inT=num(uc.inTok)*(1-lv.inR), outT=(num(uc.outTok)+num(uc.reasTok))*(1-lv.outR);
-    [0,1,2].forEach(function(i){
-      var P=modelParams(uc,i), Ps=MODELS[2].p[i];
-      var r=(P>Ps)?lv.route:0;
-      var gs=req*((1-r)*gpuSec(P,inT,outT,i,H)+r*gpuSec(Ps,inT,outT,i,H));
-      gs+=num(uc.embTok)*2*H.embP*1e9/(H.peak*1e12*SC[i].uP);
-      var eGpu=gs*H.gpuW/3.6e6, eHost=eGpu*(H.host-1), eIdle=(eGpu+eHost)*(H.idle-1);
-      var it=eGpu+eHost+eIdle, eDc=it*(op.pue-1), e=it+eDc;
-      var fab=gs*H.idle*SC[i].emb/(8*H.life*365*86400);
-      var cUse=e*grid, cBase=cUse+fab, tr=SC[i].train;
-      var c=cBase*(1+tr), en=e*(1+tr), w=e*(op.wue+H.ewif)*(1+tr);
-      var o=out[i];
-      o.e+=en; o.c+=c; o.w+=w; o.req+=req;
-      o.parts.gpu+=eGpu*grid; o.parts.srv+=(eHost+eIdle)*grid; o.parts.dc+=eDc*grid; o.parts.fab+=fab; o.parts.train+=cBase*tr;
-      o.uc.push(c);
-    });
-  });
-  return out;
-}
+function compute(lv){ return M.compute(state,lv); }
 
 /* ---------- Rendu des usages ---------- */
 function opts(list,sel,label){

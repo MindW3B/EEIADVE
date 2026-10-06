@@ -6,7 +6,14 @@ En ligne : https://calculateur.mindw3b.co/
 
 ![Aperçu](assets/img/og-image.png)
 
-## Ce que fait l'outil
+## Deux versions
+
+- **Version simple** (`/`, page d'accueil) : pensée pour les dirigeants. Trois questions obligatoires (nombre d'utilisateurs, outils, fréquence) et six facultatives pour resserrer la fourchette. Elle donne les émissions annuelles, une fourchette, un niveau de précision et le gain possible en optimisant les usages. Un lien ouvre le mode expert prérempli avec les réponses.
+- **Mode expert** (`/expert`) : le calculateur détaillé, usage par usage, décrit ci-dessous.
+
+Pour un même usage, les deux versions donnent des ordres de grandeur proches mais pas identiques : la version simple applique un PUE par outil, un forfait fabrication de +2 % et 3,5 L d'eau par kWh, là où le mode expert détaille chaque poste par hébergeur et par région.
+
+## Ce que fait le mode expert
 
 - Décrire plusieurs usages (assistant interne, support client, assistant de code…) avec leur modèle, leur hébergement, leur région et leurs volumes de tokens.
 - Obtenir l'électricité, les émissions de gaz à effet de serre et l'eau consommée, par mois ou par an, avec une fourchette basse, centrale et haute.
@@ -34,10 +41,14 @@ Le périmètre s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavesto
 
 ```
 .
-├── index.html               Page de l'outil
+├── index.html               Version simple (page d'accueil)
+├── expert.html              Mode expert, servi en /expert
 ├── assets/
-│   ├── css/style.css        Styles (thèmes clair et sombre)
-│   ├── js/calculateur.js    Référentiels, calcul et interface
+│   ├── css/simple.css       Styles de la version simple
+│   ├── css/style.css        Styles du mode expert (thèmes clair et sombre)
+│   ├── js/moteur.js         Référentiels et formules, partagés par les deux pages
+│   ├── js/simple.js         Interface de la version simple
+│   ├── js/calculateur.js    Interface du mode expert
 │   └── img/                 Logo, favicon, image de partage
 ├── vercel.json              Configuration d'hébergement
 └── CHANGELOG.md             Historique des versions
@@ -47,23 +58,28 @@ Site statique, sans dépendance ni étape de build. Seules les polices Sora et M
 
 ## Lancer en local
 
-Ouvrir `index.html` dans un navigateur, ou servir le dossier :
+Servir le dossier (les chemins sont absolus, et `/expert` repose sur `cleanUrls`) :
 
 ```bash
 npx serve .
 ```
 
+Puis ouvrir http://localhost:3000/ et http://localhost:3000/expert.
+
+La CSP (`script-src 'self'`) interdit tout script inline et tout attribut `onclick` : les interactions passent uniquement par `addEventListener`.
+
 ## Mettre à jour les hypothèses
 
-Tous les référentiels sont en haut de `assets/js/calculateur.js` :
+Tous les référentiels sont dans `assets/js/moteur.js` :
 
 - `MODELS` : modèles et paramètres actifs (bas, central, haut) ;
 - `OPS` : hébergeurs, PUE et WUE ;
 - `GRIDS` : intensité carbone par région (kg CO₂e/kWh) ;
 - `SC` : hypothèses des scénarios bas, central et haut ;
-- `HYP_DEF` : hypothèses techniques modifiables dans la page.
+- `HYP_DEF` : hypothèses techniques modifiables dans la page ;
+- `OUTILS`, `EXTRAS`, `FREQ`, `REFLEXION` : hypothèses de la version simple (PUE et réseau par outil, volumes des usages complémentaires).
 
-Après une modification de méthode, pensez à mettre à jour le tableau de la section « Méthode » dans `index.html`, le numéro de version et le `CHANGELOG.md`.
+Après une modification de méthode, pensez à mettre à jour le tableau de la section « Méthode » dans `expert.html`, le numéro de version et le `CHANGELOG.md`.
 
 ## Déploiement
 
