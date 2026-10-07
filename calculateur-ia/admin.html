@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Formulaires reçus | Mind W3B</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f6f5fc">
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/css/simple.css?v=5">
+<link rel="stylesheet" href="/assets/css/admin.css?v=5">
+<script src="/assets/js/theme.js?v=5"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/">
+      <img src="/assets/img/logo-mindw3b.png" width="40" height="39" alt="">
+      <span>Mind W3B</span>
+    </a>
+    <div class="top-actions">
+      <button type="button" class="nav-btn" id="logout" hidden>Se déconnecter</button>
+      <button type="button" class="icon-btn" data-theme-toggle aria-label="Changer de thème">
+        <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <h1>Formulaires reçus</h1>
+
+    <form class="card login" id="login">
+      <label for="pwd">Mot de passe</label>
+      <div class="login-row">
+        <input type="password" id="pwd" autocomplete="current-password" required autofocus>
+        <button type="submit" class="a-btn">Se connecter</button>
+      </div>
+      <p class="a-err" id="loginErr" role="alert"></p>
+    </form>
+
+    <section id="panel" hidden>
+      <div class="a-bar">
+        <div class="pills" role="group" aria-label="Filtrer">
+          <button type="button" class="pill" data-f="tout" aria-pressed="true">Tout <span id="nTout"></span></button>
+          <button type="button" class="pill" data-f="audit" aria-pressed="false">Demandes d'audit <span id="nAudit"></span></button>
+          <button type="button" class="pill" data-f="actualites" aria-pressed="false">Actualités <span id="nNews"></span></button>
+        </div>
+        <div class="a-bar-r">
+          <button type="button" class="a-btn ghost" id="refresh">Actualiser</button>
+          <button type="button" class="a-btn" id="csv">Exporter en CSV</button>
+        </div>
+      </div>
+      <p class="a-err" id="err" role="alert"></p>
+      <p class="a-vide" id="vide" hidden>Aucun formulaire pour l'instant.</p>
+      <div id="liste"></div>
+    </section>
+  </main>
+</div>
+<script src="/assets/js/admin.js?v=5" defer></script>
+</body>
+</html>
