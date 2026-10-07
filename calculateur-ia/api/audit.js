@@ -1,10 +1,10 @@
 /*
- * POST /api/audit : transmet une demande d'audit à Mind W3B, avec la synthèse du calcul en pièce jointe.
+ * POST /api/audit : enregistre une demande d'audit, avec la synthèse du calcul, dans la base du projet.
  * Corps : { mode, donnees, nom, entreprise, email, tel, message, consentement, delai, site_web }
  */
 'use strict';
 const L = require('./_lib/commun.js');
-const { emailAudit } = require('./_lib/emails.js');
+const base = require('./_lib/stockage.js');
 
 module.exports = async function (req, res) {
   const corps = await L.controler(req, res, 3000);
@@ -27,9 +27,8 @@ module.exports = async function (req, res) {
   const sy = L.calculer(corps);
   if (!sy) return L.repondre(res, 400, { ok: false, erreur: 'Le calcul est vide : complétez vos réponses avant d\'envoyer votre demande.' });
 
-  d.date = L.dateParis();
   try {
-    await L.envoyer(Object.assign({ to: [L.CONFIG.pour], reply_to: d.email, attachments: [L.pieceJointe(sy)] }, emailAudit(sy, d)));
+    await base.ajouter(Object.assign({ type: 'audit', consentement: true, mode: sy.mode, resultat: sy.principal.valeur, synthese: sy.texte }, d));
   } catch (e) {
     console.error('Demande d\'audit :', e.message);
     return L.repondre(res, 502, { ok: false, erreur: 'L\'envoi n\'a pas abouti. Réessayez dans un instant.' });

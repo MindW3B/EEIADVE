@@ -1,5 +1,5 @@
 /*
- * Outils communs aux fonctions d'envoi d'email (Vercel).
+ * Outils communs aux fonctions de formulaire (Vercel).
  * Les fichiers de api/_lib ne sont pas exposés comme routes.
  */
 'use strict';
@@ -7,13 +7,6 @@ require('../../assets/js/moteur.js');
 require('../../assets/js/synthese.js');
 
 const MW3B = globalThis.MW3B;
-
-const CONFIG = {
-  cle: process.env.RESEND_API_KEY || '',
-  de: process.env.MAIL_FROM || 'Mind W3B <calculateur@mindw3b.co>',
-  pour: process.env.MAIL_TO || 'nolan.nabeth@mindw3b.co',
-  site: (process.env.SITE_URL || 'https://calculateur.mindw3b.co').replace(/\/+$/, ''),
-};
 
 /* ---------- Requête ---------- */
 function repondre(res, code, corps) {
@@ -55,7 +48,6 @@ async function controler(req, res, delaiMin) {
   // Champ piège : invisible pour un humain, rempli par les robots. On fait comme si tout s'était bien passé.
   if (corps.site_web) { repondre(res, 200, { ok: true }); return null; }
   if (!(Number(corps.delai) >= delaiMin)) { repondre(res, 400, { ok: false, erreur: 'Envoi trop rapide. Patientez une seconde puis réessayez.' }); return null; }
-  if (!CONFIG.cle) { console.error('RESEND_API_KEY manquante'); repondre(res, 500, { ok: false, erreur: 'L\'envoi d\'email n\'est pas encore configuré.' }); return null; }
   return corps;
 }
 
@@ -83,35 +75,10 @@ function emailValide(v) {
   const e = texteCourt(v, 254).toLowerCase();
   return /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[a-z]{2,}$/.test(e) ? e : '';
 }
-function esc(s) {
-  return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
 
 function calculer(corps) {
   const mode = corps.mode === 'expert' ? 'expert' : 'simple';
   return MW3B.synthese(mode, corps.donnees);
 }
 
-function dateParis() {
-  return new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris', dateStyle: 'long', timeStyle: 'short' });
-}
-
-/* ---------- Resend ---------- */
-async function envoyer(email) {
-  const r = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: 'Bearer ' + CONFIG.cle, 'Content-Type': 'application/json' },
-    body: JSON.stringify(Object.assign({ from: CONFIG.de }, email)),
-  });
-  if (!r.ok) {
-    const detail = await r.text().catch(() => '');
-    throw new Error('Resend ' + r.status + ' ' + detail.slice(0, 300));
-  }
-  return r.json();
-}
-
-function pieceJointe(sy) {
-  return { filename: 'synthese-calcul.txt', content: Buffer.from(sy.texte, 'utf8').toString('base64') };
-}
-
-module.exports = { CONFIG, repondre, controler, ip, limiter, texteCourt, texteLong, emailValide, esc, calculer, dateParis, envoyer, pieceJointe };
+module.exports = { repondre, controler, ip, limiter, texteCourt, texteLong, emailValide, calculer };

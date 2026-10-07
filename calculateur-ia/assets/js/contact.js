@@ -1,6 +1,6 @@
 /*!
  * Calculateur d'empreinte environnementale de l'IA en entreprise
- * Formulaires « Faire auditer nos usages » et « Recevoir la synthèse », partagés par les deux pages
+ * Formulaire « Faire auditer nos usages » et fenêtre « Télécharger la synthèse », partagés par les deux pages
  * Mind W3B
  * https://www.mindw3b.co/
  */
@@ -20,7 +20,7 @@ var HTML={
   audit:'<dialog class="dlg" id="dlg-audit" aria-labelledby="dlg-audit-t">'+FERMER+
     '<form class="dlg-form">'+
       '<h2 id="dlg-audit-t">Faire auditer nos usages</h2>'+
-      '<p class="dlg-sub">Laissez vos coordonnées, Mind W3B vous recontacte. La synthèse de votre calcul est jointe automatiquement à votre demande.</p>'+
+      '<p class="dlg-sub">Laissez vos coordonnées, Mind W3B vous recontacte. La synthèse de votre calcul est transmise automatiquement avec votre demande.</p>'+
       '<div class="dlg-grid">'+
         champ('nom','Nom','text','autocomplete="name" maxlength="100" required autofocus')+
         champ('entreprise','Entreprise','text','autocomplete="organization" maxlength="120" required')+
@@ -35,33 +35,35 @@ var HTML={
     '</form>'+
     '<div class="dlg-done" hidden tabindex="-1">'+
       '<p class="dlg-ok-ic" aria-hidden="true">✓</p>'+
-      '<h2>Merci, votre demande est partie</h2>'+
-      '<p class="dlg-sub">Elle est arrivée chez Mind W3B avec la synthèse de votre calcul. Nous vous répondons par email.</p>'+
+      '<h2>Merci, votre demande est bien enregistrée</h2>'+
+      '<p class="dlg-sub">Mind W3B l\'a reçue avec la synthèse de votre calcul et vous recontacte par email.</p>'+
       '<button type="button" class="dlg-btn" data-fermer>Fermer</button>'+
     '</div>'+
   '</dialog>',
 
   synthese:'<dialog class="dlg" id="dlg-synthese" aria-labelledby="dlg-synthese-t">'+FERMER+
-    '<form class="dlg-form">'+
-      '<h2 id="dlg-synthese-t">Recevoir la synthèse</h2>'+
-      '<p class="dlg-sub">Votre résultat et vos réponses, dans un email à garder ou à transférer.</p>'+
-      champ('s-email','Votre email','email','autocomplete="email" maxlength="254" required autofocus')+
-      PIEGE+
-      '<label class="dlg-check"><input type="checkbox" name="actualites"><span>Je souhaite aussi recevoir les actualités de Mind W3B (facultatif, désinscription à tout moment).</span></label>'+
-      '<p class="dlg-mention">Votre adresse sert à vous envoyer cette synthèse. Mind W3B est prévenu de l\'envoi et peut vous écrire au sujet de votre calcul. Plus de détails dans la '+POLITIQUE+'.</p>'+
-      '<p class="dlg-err" role="alert"></p>'+
-      '<button type="submit" class="dlg-btn">Recevoir la synthèse</button>'+
-    '</form>'+
-    '<div class="dlg-done" hidden tabindex="-1">'+
-      '<p class="dlg-ok-ic" aria-hidden="true">✓</p>'+
-      '<h2>C\'est envoyé</h2>'+
-      '<p class="dlg-sub">Votre synthèse part à <b class="dlg-dest"></b>. Si vous ne la voyez pas d\'ici quelques minutes, regardez dans vos indésirables.</p>'+
-    '</div>'+
-    '<div class="dlg-copie" hidden>'+
-      '<button type="button" class="dlg-btn ghost" data-copier>Copier le texte de la synthèse</button>'+
+    '<div class="dlg-form">'+
+      '<h2 id="dlg-synthese-t">Votre synthèse</h2>'+
+      '<p class="dlg-sub">Votre résultat et vos réponses, en texte, à garder ou à transférer.</p>'+
+      '<div class="dlg-actions">'+
+        '<button type="button" class="dlg-btn" data-telecharger>Télécharger (.txt)</button>'+
+        '<button type="button" class="dlg-btn ghost" data-copier>Copier le texte</button>'+
+      '</div>'+
       '<p class="dlg-note" aria-live="polite"></p>'+
       '<textarea class="dlg-texte" readonly hidden aria-label="Texte de la synthèse"></textarea>'+
     '</div>'+
+    '<form class="dlg-form dlg-news">'+
+      '<h3>Recevoir les actualités de Mind W3B</h3>'+
+      '<p class="dlg-mention">Facultatif. Laissez votre email pour être informé de nos nouveautés et retours d\'expérience. Désinscription à tout moment.</p>'+
+      '<div class="dlg-ligne">'+
+        '<div class="dlg-f"><label for="c-n-email" class="sr-only">Votre email</label><input type="email" id="c-n-email" name="email" autocomplete="email" maxlength="254" placeholder="vous@entreprise.fr" required></div>'+
+        '<button type="submit" class="dlg-btn ghost">M\'inscrire</button>'+
+      '</div>'+
+      PIEGE+
+      '<p class="dlg-mention">Votre email est enregistré avec la synthèse de votre calcul. Plus de détails dans la '+POLITIQUE+'.</p>'+
+      '<p class="dlg-err" role="alert"></p>'+
+    '</form>'+
+    '<div class="dlg-done" hidden tabindex="-1"><p class="dlg-sub"><b>C\'est noté.</b> Vous recevrez les actualités de Mind W3B à cette adresse.</p></div>'+
   '</dialog>'
 };
 
@@ -73,6 +75,7 @@ function construire(type){
   d.addEventListener('click',function(e){
     if(e.target===d||e.target.closest('[data-fermer]')) d.close();
     if(e.target.closest('[data-copier]')) copier(d);
+    if(e.target.closest('[data-telecharger]')) telecharger(d);
   });
   d.querySelector('form').addEventListener('submit',function(e){ e.preventDefault(); envoyer(type,d,this); });
   return d;
@@ -85,10 +88,10 @@ function ouvrir(type){
   texte=sy?sy.texte:'';
   d.querySelector('form').hidden=false;
   d.querySelector('.dlg-done').hidden=true;
-  var cp=d.querySelector('.dlg-copie'); if(cp){ cp.hidden=true; cp.querySelector('.dlg-texte').hidden=true; cp.querySelector('.dlg-note').textContent=''; }
+  var ta=d.querySelector('.dlg-texte'); if(ta){ ta.hidden=true; d.querySelector('.dlg-note').textContent=''; }
   var err=d.querySelector('.dlg-err');
   err.textContent=sy?'':'Complétez d\'abord le calcul : il n\'y a encore rien à envoyer.';
-  d.querySelector('.dlg-btn[type=submit]').disabled=!sy;
+  d.querySelectorAll('[type=submit],[data-copier],[data-telecharger]').forEach(function(b){ b.disabled=!sy; });
   ouvertA=Date.now();
   d.showModal();
 }
@@ -101,7 +104,7 @@ function envoyer(type,d,f){
     corps.nom=f.nom.value; corps.entreprise=f.entreprise.value; corps.email=f.email.value;
     corps.tel=f.tel.value; corps.message=f.message.value; corps.consentement=f.consentement.checked;
   } else {
-    corps.email=f['s-email'].value; corps.actualites=f.actualites.checked;
+    corps.email=f.email.value;
   }
   var lib=btn.textContent;
   btn.disabled=true; btn.textContent='Envoi en cours…'; err.textContent='';
@@ -111,20 +114,24 @@ function envoyer(type,d,f){
     err.innerHTML='';
     err.appendChild(document.createTextNode((msg||'L\'envoi n\'a pas abouti.')+' Vous pouvez aussi écrire à '));
     var a=document.createElement('a'); a.href='mailto:'+CONTACT; a.textContent=CONTACT; err.appendChild(a); err.appendChild(document.createTextNode('.'));
-    var cp=d.querySelector('.dlg-copie'); if(cp) cp.hidden=false;
   }
-  fetch('/api/'+type,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(corps)})
+  fetch(type==='audit'?'/api/audit':'/api/actualites',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(corps)})
     .then(function(r){ return r.json().catch(function(){ return {ok:false}; }); })
     .then(function(rep){
       if(!rep||!rep.ok) return echec(rep&&rep.erreur);
       fin();
       f.hidden=true;
       var ok=d.querySelector('.dlg-done'); ok.hidden=false;
-      var dest=d.querySelector('.dlg-dest'); if(dest) dest.textContent=corps.email;
-      var cp=d.querySelector('.dlg-copie'); if(cp) cp.hidden=false;
       ok.focus();
       if(type==='audit') f.message.value='';
     }, function(){ echec('L\'envoi n\'a pas abouti. Vérifiez votre connexion.'); });
+}
+
+function telecharger(d){
+  var a=document.createElement('a'), url=URL.createObjectURL(new Blob([texte],{type:'text/plain;charset=utf-8'}));
+  a.href=url; a.download='synthese-empreinte-ia.txt'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); },1000);
+  d.querySelector('.dlg-note').textContent='Fichier téléchargé.';
 }
 
 function copier(d){

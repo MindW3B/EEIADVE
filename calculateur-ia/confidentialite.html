@@ -14,8 +14,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/assets/css/simple.css?v=4">
-<script src="/assets/js/theme.js?v=4"></script>
+<link rel="stylesheet" href="/assets/css/simple.css?v=5">
+<script src="/assets/js/theme.js?v=5"></script>
 </head>
 <body>
 <div class="wrap">
@@ -43,7 +43,7 @@
       <ul>
         <li>Le calcul se fait dans votre navigateur. Vos réponses n'en sortent pas tant que vous n'envoyez pas de formulaire.</li>
         <li>Le calculateur n'utilise ni cookie publicitaire ni outil de mesure d'audience.</li>
-        <li>Si vous demandez votre synthèse ou un audit, les informations que vous saisissez sont envoyées par email à Mind W3B, et à vous pour la synthèse.</li>
+        <li>Si vous demandez un audit ou vous inscrivez aux actualités, les informations que vous saisissez sont enregistrées pour Mind W3B, avec la synthèse de votre calcul.</li>
         <li>Vous pouvez demander à tout moment l'accès à vos données, leur correction ou leur suppression.</li>
       </ul>
     </section>
@@ -62,16 +62,12 @@
 
     <section class="card">
       <h2>3. Les données que vous nous envoyez</h2>
-      <h3>«&nbsp;Recevoir la synthèse&nbsp;»</h3>
+      <h3>Synthèse du calcul</h3>
+      <p>Le téléchargement et la copie de la synthèse se font dans votre navigateur&nbsp;: rien n'est envoyé à Mind W3B.</p>
+      <h3>Actualités de Mind W3B (inscription facultative)</h3>
       <ul>
-        <li><b>Données&nbsp;:</b> votre adresse email, votre choix de recevoir ou non les actualités de Mind W3B, et vos réponses au calculateur.</li>
-        <li><b>Utilisation&nbsp;:</b> vous envoyer la synthèse de votre calcul. Mind W3B reçoit une copie de cette synthèse et votre adresse, pour pouvoir vous écrire au sujet de votre calcul.</li>
-        <li><b>Base légale&nbsp;:</b> l'exécution de votre demande pour l'envoi de la synthèse. Pour la prise de contact par Mind W3B&nbsp;: <mark class="todo">[À VALIDER : intérêt légitime de Mind W3B à proposer ses services à des professionnels, avec possibilité de s'y opposer à tout moment]</mark>.</li>
-      </ul>
-      <h3>Actualités de Mind W3B (case facultative)</h3>
-      <ul>
-        <li><b>Données&nbsp;:</b> votre adresse email, la date et l'heure de votre accord.</li>
-        <li><b>Utilisation&nbsp;:</b> vous envoyer les actualités de Mind W3B.</li>
+        <li><b>Données&nbsp;:</b> votre adresse email, la date et l'heure de votre inscription, et la synthèse de votre calcul.</li>
+        <li><b>Utilisation&nbsp;:</b> vous envoyer les actualités de Mind W3B. La synthèse de votre calcul permet de vous proposer des contenus adaptés.</li>
         <li><b>Base légale&nbsp;:</b> votre consentement. Vous pouvez le retirer à tout moment, en répondant à l'un de nos emails ou en nous écrivant.</li>
       </ul>
       <h3>«&nbsp;Faire auditer nos usages&nbsp;»</h3>
@@ -81,7 +77,7 @@
         <li><b>Base légale&nbsp;:</b> les mesures précontractuelles prises à votre demande. <mark class="todo">[À VALIDER : base légale retenue]</mark></li>
       </ul>
       <h3>Données techniques</h3>
-      <p>Pour limiter les envois abusifs, l'adresse IP de l'appareil qui envoie un formulaire est gardée quelques minutes en mémoire, puis oubliée. Elle n'est pas enregistrée dans les emails. L'hébergeur du site conserve par ailleurs des journaux techniques de connexion <mark class="todo">[À COMPLÉTER : durée de conservation des journaux Vercel selon votre offre]</mark>.</p>
+      <p>Pour limiter les envois abusifs, l'adresse IP de l'appareil qui envoie un formulaire est gardée quelques minutes en mémoire, puis oubliée. Elle n'est pas enregistrée avec vos données. L'hébergeur du site conserve par ailleurs des journaux techniques de connexion <mark class="todo">[À COMPLÉTER : durée de conservation des journaux Vercel selon votre offre]</mark>.</p>
     </section>
 
     <section class="card">
@@ -91,9 +87,8 @@
         <table>
           <thead><tr><th>Prestataire</th><th>Rôle</th><th>Localisation et garanties</th></tr></thead>
           <tbody>
-            <tr><td>Resend</td><td>Envoi des emails</td><td>États-Unis. <mark class="todo">[À COMPLÉTER : dénomination exacte, région d'envoi choisie, garanties : Data Privacy Framework et/ou clauses contractuelles types]</mark></td></tr>
-            <tr><td>Vercel Inc.</td><td>Hébergement du site et des fonctions d'envoi</td><td>États-Unis. <mark class="todo">[À COMPLÉTER : région d'exécution, garanties]</mark></td></tr>
-            <tr><td><mark class="todo">[À COMPLÉTER : fournisseur de la messagerie de Mind W3B]</mark></td><td>Réception des emails par Mind W3B</td><td><mark class="todo">[À COMPLÉTER]</mark></td></tr>
+            <tr><td>Upstash, Inc.</td><td>Base de données où sont enregistrés les formulaires</td><td>Données hébergées dans l'Union européenne <mark class="todo">[À VÉRIFIER : région choisie à la création de la base, par exemple Francfort]</mark>. Société établie aux États-Unis. <mark class="todo">[À COMPLÉTER : garanties : Data Privacy Framework et/ou clauses contractuelles types]</mark></td></tr>
+            <tr><td>Vercel Inc.</td><td>Hébergement du site et des formulaires</td><td>États-Unis. <mark class="todo">[À COMPLÉTER : région d'exécution, garanties]</mark></td></tr>
             <tr><td>Google</td><td>Polices de caractères (Google Fonts)</td><td>États-Unis. Votre navigateur télécharge les polices depuis les serveurs de Google, qui reçoivent votre adresse IP. <mark class="todo">[À VALIDER : maintenir ou héberger les polices sur le site]</mark></td></tr>
           </tbody>
         </table>
@@ -104,9 +99,7 @@
       <h2>5. Combien de temps nous les gardons</h2>
       <ul>
         <li><b>Demandes d'audit&nbsp;:</b> <mark class="todo">[À COMPLÉTER : par exemple 3 ans après le dernier contact de votre part, durée recommandée par la CNIL pour les prospects]</mark>.</li>
-        <li><b>Synthèses envoyées&nbsp;:</b> <mark class="todo">[À COMPLÉTER : durée de conservation des emails de notification]</mark>.</li>
         <li><b>Actualités&nbsp;:</b> jusqu'à votre désinscription. La preuve de votre accord est conservée <mark class="todo">[À COMPLÉTER : durée]</mark>.</li>
-        <li><b>Journaux d'envoi chez Resend&nbsp;:</b> <mark class="todo">[À COMPLÉTER : durée selon votre offre Resend]</mark>.</li>
       </ul>
     </section>
 
@@ -119,7 +112,7 @@
 
     <section class="card">
       <h2>7. Sécurité</h2>
-      <p>Les échanges avec le site sont chiffrés (HTTPS). Les données envoyées par les formulaires sont vérifiées avant l'envoi de l'email et ne sont pas stockées dans une base de données du site. L'accès à la messagerie et aux comptes des prestataires est réservé à Mind W3B. <mark class="todo">[À COMPLÉTER : mesures complémentaires, par exemple double authentification]</mark></p>
+      <p>Les échanges avec le site sont chiffrés (HTTPS). Les données envoyées par les formulaires sont vérifiées avant d'être enregistrées. Elles ne sont consultables que par Mind W3B, depuis un espace protégé par mot de passe. L'accès aux comptes des prestataires est réservé à Mind W3B. <mark class="todo">[À COMPLÉTER : mesures complémentaires, par exemple double authentification]</mark></p>
     </section>
   </main>
 

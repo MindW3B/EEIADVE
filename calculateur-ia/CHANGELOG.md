@@ -2,12 +2,12 @@
 
 ## v1.2.0 (octobre 2026)
 
-Synthèse par email et demande d'audit.
+Demande d'audit, synthèse téléchargeable et inscription aux actualités.
 
-- « Faire auditer nos usages » ouvre un formulaire de contact dans les deux versions. La demande arrive par email chez Mind W3B, avec la synthèse du calcul en pièce jointe.
-- « Recevoir la synthèse » remplace « Copier la synthèse » : la synthèse est envoyée par email au visiteur, Mind W3B est prévenu à chaque envoi. Case facultative pour les actualités de Mind W3B. Le texte reste copiable après l'envoi.
-- Deux fonctions Vercel (`api/synthese.js`, `api/audit.js`) envoient les emails via Resend. Elles recalculent la synthèse avec le moteur partagé.
-- Texte de la synthèse extrait dans `assets/js/synthese.js`, partagé par les pages et les fonctions.
+- « Faire auditer nos usages » ouvre un formulaire de contact dans les deux versions. La demande est enregistrée avec la synthèse du calcul.
+- « Télécharger la synthèse » remplace « Copier la synthèse » : téléchargement en .txt ou copie, et inscription facultative aux actualités de Mind W3B.
+- Les formulaires sont enregistrés dans une base Upstash Redis (fonctions Vercel `api/audit.js`, `api/actualites.js`) et se consultent sur `/admin`, protégée par mot de passe, avec export CSV et suppression.
+- Texte de la synthèse extrait dans `assets/js/synthese.js`, partagé par les pages et les fonctions, qui le recalculent côté serveur.
 - Nouvelle page `/confidentialite`, liée depuis le pied de page des deux versions.
 
 ## v1.1.0 (octobre 2026)
