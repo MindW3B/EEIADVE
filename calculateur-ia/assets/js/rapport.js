@@ -12,7 +12,7 @@ var HAUT_PIED=64, BAS=H-HAUT_PIED-8;         // zone réservée au pied de page
 var C={nuit:'#130f2c',violet:'#5b3fd6',rose:'#ff2fb5',magenta:'#d1148c',lilas:'#9a7bff',bleu:'#4a6bff',mut:'#5d5886',doux:'#f3f1ff',ligne:'#e4e0f3',nuitDoux:'#c3bde6'};
 var SORA='"Sora","Manrope",system-ui,-apple-system,"Segoe UI",Arial,sans-serif';
 var MAN='"Manrope",system-ui,-apple-system,"Segoe UI",Arial,sans-serif';
-var CONTACT='nolan.nabeth@mindw3b.co', SITE='https://calculateur.mindw3b.co/';
+var SITE='https://calculateur.mindw3b.co/', AGENCE='https://www.mindw3b.co/';
 
 function police(ctx,poids,taille,famille){ ctx.font=poids+' '+taille+'px '+famille; }
 function lignes(ctx,texte,largeur){
@@ -164,10 +164,10 @@ Mise.prototype.appel=function(){
   lignes(ctx,'Mind W3B audite les usages d’IA des entreprises pour réduire leur empreinte et leur facture. Parlons de vos usages réels.',w-56)
     .forEach(function(s,i){ ctx.fillText(s,MX+28,y+60+i*20); });
   police(ctx,700,14.5,MAN); ctx.fillStyle='#fff';
-  var t1=CONTACT, t2='calculateur.mindw3b.co', x2=MX+28+ctx.measureText(t1).width+28;
+  var t1='www.mindw3b.co', t2='calculateur.mindw3b.co', x2=MX+28+ctx.measureText(t1).width+28;
   ctx.fillText(t1,MX+28,y+104); ctx.fillText(t2,x2,y+104);
   ctx.globalAlpha=.6; ctx.fillText('·',x2-17,y+104); ctx.globalAlpha=1;
-  this.lien(MX+28,y+88,ctx.measureText(t1).width+4,22,'mailto:'+CONTACT);
+  this.lien(MX+28,y+88,ctx.measureText(t1).width+4,22,AGENCE);
   this.lien(x2,y+88,ctx.measureText(t2).width,22,SITE);
   this.y+=h+20;
 };
