@@ -19,18 +19,18 @@ Pour un même usage, les deux versions donnent des ordres de grandeur proches ma
 - Obtenir l'électricité, les émissions de gaz à effet de serre et l'eau consommée, par mois ou par an, avec une fourchette basse, centrale et haute.
 - Voir d'où viennent les émissions : calcul GPU, serveur et veille, refroidissement, fabrication du matériel, entraînement amorti.
 - Simuler des leviers d'optimisation : réduction des tokens d'entrée et de sortie, routage vers un modèle léger.
-## Synthèse, demande d'audit et actualités
+## Synthèse PDF et demande d'audit
 
 Le bloc résultat des deux versions propose deux actions :
 
 - **Faire auditer nos usages** : formulaire (nom, entreprise, email, téléphone et message facultatifs, consentement). La demande est enregistrée dans la base du projet avec la synthèse du calcul.
-- **Télécharger la synthèse** : le visiteur télécharge (.txt) ou copie sa synthèse, sans rien envoyer. Il peut aussi laisser son email pour recevoir les actualités de Mind W3B ; l'inscription est enregistrée avec la synthèse.
+- **Télécharger la synthèse** : le visiteur saisit un email valide pour obtenir un récapitulatif PDF aux couleurs de Mind W3B (une page en version simple). Une case facultative permet de recevoir les actualités. L'email est enregistré avec la synthèse ; le PDF est dessiné dans le navigateur (`assets/js/rapport.js`, sans bibliothèque). Le texte reste copiable.
 
 Les formulaires reçus se consultent sur **`/admin`**, protégée par mot de passe : liste filtrable, détail et synthèse de chaque demande, export CSV (séparateur « ; », lisible par Excel) et suppression.
 
 Les saisies restent dans le navigateur de l'utilisateur (localStorage) tant qu'il n'envoie pas l'un de ces formulaires. Les fonctions recalculent la synthèse à partir des réponses, avec le même moteur que les pages : aucun texte de synthèse venant du navigateur n'est enregistré tel quel.
 
-Protections contre les abus : champ piège invisible, délai minimum avant envoi, vérification de l'origine de la requête, limite de 5 envois par IP toutes les 10 minutes (compteurs en mémoire, approximatifs sur Vercel). Sur `/admin` : 10 essais de mot de passe par IP et par quart d'heure.
+Protections contre les abus : champ piège invisible, délai minimum avant envoi, vérification de l'origine de la requête, limite d'envois par IP (5 demandes d'audit et 8 synthèses toutes les 10 minutes) (compteurs en mémoire, approximatifs sur Vercel). Sur `/admin` : 10 essais de mot de passe par IP et par quart d'heure.
 
 ## Méthode
 
@@ -56,7 +56,7 @@ Le périmètre s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavesto
 ├── admin.html               Formulaires reçus, servie en /admin (mot de passe)
 ├── api/
 │   ├── audit.js             POST /api/audit : enregistre une demande d'audit
-│   ├── actualites.js        POST /api/actualites : enregistre une inscription aux actualités
+│   ├── synthese.js          POST /api/synthese : enregistre l'email laissé pour télécharger la synthèse
 │   ├── admin.js             GET / DELETE /api/admin : lecture et suppression des formulaires
 │   └── _lib/                Outils communs et accès à la base (non exposés)
 ├── assets/
@@ -68,14 +68,17 @@ Le périmètre s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavesto
 │   ├── js/synthese.js       Texte de la synthèse, partagé par les deux pages et par api/
 │   ├── js/simple.js         Interface de la version simple
 │   ├── js/calculateur.js    Interface du mode expert
+│   ├── js/rapport.js        Synthèse en PDF (canvas puis PDF, sans dépendance)
 │   ├── js/contact.js        Fenêtres de synthèse et d'audit
 │   ├── js/admin.js          Page /admin
+│   ├── css/fonts.css        Déclaration des polices hébergées
+│   ├── fonts/               Sora et Manrope (woff2, licence SIL OFL)
 │   └── img/                 Logo, favicon, image de partage
 ├── vercel.json              Configuration d'hébergement
 └── CHANGELOG.md             Historique des versions
 ```
 
-Site statique, sans dépendance ni étape de build, plus trois fonctions Vercel (Node 18 ou plus récent) qui enregistrent les formulaires dans une base Upstash Redis. Seules les polices Sora et Manrope sont chargées depuis Google Fonts.
+Site statique, sans dépendance ni étape de build, plus trois fonctions Vercel (Node 18 ou plus récent) qui enregistrent les formulaires dans une base Upstash Redis. Les polices Sora et Manrope sont hébergées sur le site (`assets/fonts/`, licence SIL OFL) : aucune ressource n'est chargée depuis un service tiers.
 
 ## Lancer en local
 

@@ -7,6 +7,9 @@
 var KEY='mw3b-admin', mdp='', entrees=[], filtre='tout';
 function $(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+// Ancien format : inscriptions aux actualités seules, avant le téléchargement contre email.
+function news(e){ return e.type==='actualites'||e.actualites===true; }
+function garde(e){ return filtre==='tout'||(filtre==='actualites'?news(e):e.type===filtre); }
 function date(iso){ return new Date(iso).toLocaleString('fr-FR',{dateStyle:'medium',timeStyle:'short'}); }
 
 function api(methode,qs){
@@ -27,17 +30,18 @@ function charger(){
 }
 
 function afficher(){
-  var n={audit:0,actualites:0};
-  entrees.forEach(function(e){ n[e.type]=(n[e.type]||0)+1; });
-  $('nTout').textContent=entrees.length; $('nAudit').textContent=n.audit; $('nNews').textContent=n.actualites;
+  var n={audit:0,synthese:0,news:0};
+  entrees.forEach(function(e){ if(e.type in n) n[e.type]++; if(news(e)) n.news++; });
+  $('nTout').textContent=entrees.length; $('nAudit').textContent=n.audit; $('nSyn').textContent=n.synthese; $('nNews').textContent=n.news;
   document.querySelectorAll('[data-f]').forEach(function(b){ b.setAttribute('aria-pressed',String(b.dataset.f===filtre)); });
-  var vis=entrees.filter(function(e){ return filtre==='tout'||e.type===filtre; });
+  var vis=entrees.filter(garde);
   $('vide').hidden=vis.length>0;
   $('liste').innerHTML=vis.map(function(e){
     var audit=e.type==='audit';
     return '<details class="card item">'+
       '<summary>'+
-        '<span class="tag '+(audit?'t-audit':'t-news')+'">'+(audit?'Audit':'Actualités')+'</span>'+
+        '<span class="tag '+(audit?'t-audit':'t-news')+'">'+(audit?'Audit':e.type==='synthese'?'Synthèse':'Actualités')+'</span>'+
+        (!audit&&news(e)?'<span class="tag t-opt">Actualités ✓</span>':'')+
         '<span class="who"><b>'+esc(audit?e.entreprise:e.email)+'</b>'+(audit?' · '+esc(e.nom):'')+'</span>'+
         '<span class="when">'+esc(date(e.date))+'</span>'+
       '</summary>'+
@@ -47,7 +51,7 @@ function afficher(){
         (audit?'<div><dt>Téléphone</dt><dd>'+(e.tel?'<a href="tel:'+esc(e.tel.replace(/[^\d+]/g,''))+'">'+esc(e.tel)+'</a>':'—')+'</dd></div>':'')+
         (audit?'<div><dt>Message</dt><dd class="msg">'+(e.message?esc(e.message):'—')+'</dd></div>':'')+
         '<div><dt>Résultat</dt><dd>'+esc(e.resultat||'—')+' ('+(e.mode==='expert'?'mode expert':'version simple')+')</dd></div>'+
-        '<div><dt>Consentement</dt><dd>'+(audit?'Recontact accepté':'Actualités acceptées')+' le '+esc(date(e.date))+'</dd></div>'+
+        '<div><dt>Consentement</dt><dd>'+(audit?'Recontact accepté le '+esc(date(e.date)):e.type==='synthese'?'Email laissé pour télécharger la synthèse le '+esc(date(e.date))+'<br>Actualités : '+(e.actualites?'<b>oui</b>':'non'):'Actualités acceptées le '+esc(date(e.date)))+'</dd></div>'+
       '</dl>'+
       (e.synthese?'<details class="syn"><summary>Synthèse du calcul</summary><pre>'+esc(e.synthese)+'</pre></details>':'')+
       '<div class="item-act"><button type="button" class="a-btn ghost danger" data-del="'+esc(e.id)+'">Supprimer</button></div>'+
@@ -56,13 +60,13 @@ function afficher(){
 }
 
 function csv(){
-  var cols=[['date','Date'],['type','Type'],['nom','Nom'],['entreprise','Entreprise'],['email','Email'],['tel','Téléphone'],['message','Message'],['resultat','Résultat'],['mode','Mode'],['synthese','Synthèse']];
+  var cols=[['date','Date'],['type','Type'],['actualites','Actualités'],['nom','Nom'],['entreprise','Entreprise'],['email','Email'],['tel','Téléphone'],['message','Message'],['resultat','Résultat'],['mode','Mode'],['synthese','Synthèse']];
   function cell(v){
     v=String(v==null?'':v);
     if(/^[=+\-@\t\r]/.test(v)) v="'"+v; // pas de formule exécutée à l'ouverture dans Excel
     return /[";\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }
   var lignes=[cols.map(function(c){return c[1];}).join(';')].concat(entrees.map(function(e){
-    return cols.map(function(c){ return cell(c[0]==='date'?date(e.date):c[0]==='type'?(e.type==='audit'?'Audit':'Actualités'):e[c[0]]); }).join(';');
+    return cols.map(function(c){ return cell(c[0]==='date'?date(e.date):c[0]==='type'?(e.type==='audit'?'Audit':e.type==='synthese'?'Synthèse':'Actualités'):c[0]==='actualites'?(news(e)?'oui':'non'):e[c[0]]); }).join(';');
   }));
   // BOM pour qu'Excel lise correctement les accents ; « ; » comme séparateur pour Excel en français.
   var url=URL.createObjectURL(new Blob(['﻿'+lignes.join('\r\n')],{type:'text/csv;charset=utf-8'}));

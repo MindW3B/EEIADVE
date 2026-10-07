@@ -1,6 +1,6 @@
 /*!
  * Calculateur d'empreinte environnementale de l'IA en entreprise
- * Formulaire « Faire auditer nos usages » et fenêtre « Télécharger la synthèse », partagés par les deux pages
+ * Formulaire « Faire auditer nos usages » et synthèse en PDF, partagés par les deux pages
  * Mind W3B
  * https://www.mindw3b.co/
  */
@@ -42,32 +42,33 @@ var HTML={
   '</dialog>',
 
   synthese:'<dialog class="dlg" id="dlg-synthese" aria-labelledby="dlg-synthese-t">'+FERMER+
-    '<div class="dlg-form">'+
-      '<h2 id="dlg-synthese-t">Votre synthèse</h2>'+
-      '<p class="dlg-sub">Votre résultat et vos réponses, en texte, à garder ou à transférer.</p>'+
+    '<form class="dlg-form">'+
+      '<p class="dlg-pdf" aria-hidden="true"><span>PDF</span></p>'+
+      '<h2 id="dlg-synthese-t">Recevez votre synthèse en PDF</h2>'+
+      '<p class="dlg-sub">Un récapitulatif clair de votre résultat et de vos réponses, aux couleurs de Mind W3B, à garder ou à partager en interne.</p>'+
+      champ('s-email','Votre email professionnel','email','autocomplete="email" maxlength="254" placeholder="vous@entreprise.fr" required autofocus')+
+      PIEGE+
+      '<label class="dlg-check"><input type="checkbox" name="actualites"><span>Je souhaite aussi recevoir les actualités de Mind W3B (facultatif, désinscription à tout moment).</span></label>'+
+      '<p class="dlg-mention">Votre email est enregistré avec la synthèse de votre calcul, et Mind W3B pourra vous écrire à son sujet. Plus de détails dans la '+POLITIQUE+'.</p>'+
+      '<p class="dlg-err" role="alert"></p>'+
+      '<button type="submit" class="dlg-btn">Télécharger ma synthèse</button>'+
+    '</form>'+
+    '<div class="dlg-done" hidden tabindex="-1">'+
+      '<p class="dlg-ok-ic" aria-hidden="true">✓</p>'+
+      '<h2>Votre synthèse est prête</h2>'+
+      '<p class="dlg-sub">Le PDF se télécharge. S\'il ne s\'est pas ouvert, utilisez le bouton ci-dessous.</p>'+
       '<div class="dlg-actions">'+
-        '<button type="button" class="dlg-btn" data-telecharger>Télécharger (.txt)</button>'+
+        '<button type="button" class="dlg-btn" data-telecharger>Télécharger le PDF</button>'+
         '<button type="button" class="dlg-btn ghost" data-copier>Copier le texte</button>'+
       '</div>'+
       '<p class="dlg-note" aria-live="polite"></p>'+
       '<textarea class="dlg-texte" readonly hidden aria-label="Texte de la synthèse"></textarea>'+
     '</div>'+
-    '<form class="dlg-form dlg-news">'+
-      '<h3>Recevoir les actualités de Mind W3B</h3>'+
-      '<p class="dlg-mention">Facultatif. Laissez votre email pour être informé de nos nouveautés et retours d\'expérience. Désinscription à tout moment.</p>'+
-      '<div class="dlg-ligne">'+
-        '<div class="dlg-f"><label for="c-n-email" class="sr-only">Votre email</label><input type="email" id="c-n-email" name="email" autocomplete="email" maxlength="254" placeholder="vous@entreprise.fr" required></div>'+
-        '<button type="submit" class="dlg-btn ghost">M\'inscrire</button>'+
-      '</div>'+
-      PIEGE+
-      '<p class="dlg-mention">Votre email est enregistré avec la synthèse de votre calcul. Plus de détails dans la '+POLITIQUE+'.</p>'+
-      '<p class="dlg-err" role="alert"></p>'+
-    '</form>'+
-    '<div class="dlg-done" hidden tabindex="-1"><p class="dlg-sub"><b>C\'est noté.</b> Vous recevrez les actualités de Mind W3B à cette adresse.</p></div>'+
   '</dialog>'
 };
 
-var dlg={}, ouvertA=0, texte='';
+var dlg={}, ouvertA=0, texte='', syCourant=null, DEBLOQUE='mw3b-synthese-ok';
+function debloque(){ try{ return localStorage.getItem(DEBLOQUE)==='1'; }catch(e){ return false; } }
 function construire(type){
   if(dlg[type]) return dlg[type];
   var tmp=document.createElement('div'); tmp.innerHTML=HTML[type];
@@ -85,15 +86,18 @@ function etat(){ return M.etatCourant?M.etatCourant():null; }
 
 function ouvrir(type){
   var d=construire(type), s=etat(), sy=s&&M.synthese(s.mode,s.donnees);
-  texte=sy?sy.texte:'';
-  d.querySelector('form').hidden=false;
-  d.querySelector('.dlg-done').hidden=true;
+  texte=sy?sy.texte:''; syCourant=sy||null;
+  // Le visiteur qui a déjà laissé son email dans ce navigateur télécharge directement.
+  var dejaFait=type==='synthese'&&sy&&debloque();
+  d.querySelector('form').hidden=dejaFait;
+  d.querySelector('.dlg-done').hidden=!dejaFait;
   var ta=d.querySelector('.dlg-texte'); if(ta){ ta.hidden=true; d.querySelector('.dlg-note').textContent=''; }
   var err=d.querySelector('.dlg-err');
   err.textContent=sy?'':'Complétez d\'abord le calcul : il n\'y a encore rien à envoyer.';
   d.querySelectorAll('[type=submit],[data-copier],[data-telecharger]').forEach(function(b){ b.disabled=!sy; });
   ouvertA=Date.now();
   d.showModal();
+  if(dejaFait) telecharger(d);
 }
 
 function envoyer(type,d,f){
@@ -104,7 +108,7 @@ function envoyer(type,d,f){
     corps.nom=f.nom.value; corps.entreprise=f.entreprise.value; corps.email=f.email.value;
     corps.tel=f.tel.value; corps.message=f.message.value; corps.consentement=f.consentement.checked;
   } else {
-    corps.email=f.email.value;
+    corps.email=f['s-email'].value; corps.actualites=f.actualites.checked;
   }
   var lib=btn.textContent;
   btn.disabled=true; btn.textContent='Envoi en cours…'; err.textContent='';
@@ -115,23 +119,41 @@ function envoyer(type,d,f){
     err.appendChild(document.createTextNode((msg||'L\'envoi n\'a pas abouti.')+' Vous pouvez aussi écrire à '));
     var a=document.createElement('a'); a.href='mailto:'+CONTACT; a.textContent=CONTACT; err.appendChild(a); err.appendChild(document.createTextNode('.'));
   }
-  fetch(type==='audit'?'/api/audit':'/api/actualites',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(corps)})
-    .then(function(r){ return r.json().catch(function(){ return {ok:false}; }); })
+  function reussi(){
+    fin();
+    f.hidden=true;
+    var ok=d.querySelector('.dlg-done'); ok.hidden=false;
+    ok.focus();
+    if(type==='audit') f.message.value='';
+    else { try{ localStorage.setItem(DEBLOQUE,'1'); }catch(e){} telecharger(d); }
+  }
+  fetch('/api/'+type,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(corps)})
+    .then(function(r){ return r.json().catch(function(){ return {ok:false}; }).then(function(j){ j.status=r.status; return j; }); })
     .then(function(rep){
-      if(!rep||!rep.ok) return echec(rep&&rep.erreur);
-      fin();
-      f.hidden=true;
-      var ok=d.querySelector('.dlg-done'); ok.hidden=false;
-      ok.focus();
-      if(type==='audit') f.message.value='';
-    }, function(){ echec('L\'envoi n\'a pas abouti. Vérifiez votre connexion.'); });
+      if(rep.ok) return reussi();
+      // Panne côté serveur : on ne prive pas le visiteur de sa synthèse.
+      if(type==='synthese'&&rep.status>=500) return reussi();
+      echec(rep.erreur);
+    }, function(){ if(type==='synthese') reussi(); else echec('L\'envoi n\'a pas abouti. Vérifiez votre connexion.'); });
 }
 
+function enregistrer(blob,nom){
+  var a=document.createElement('a'), url=URL.createObjectURL(blob);
+  a.href=url; a.download=nom; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); },4000);
+}
 function telecharger(d){
-  var a=document.createElement('a'), url=URL.createObjectURL(new Blob([texte],{type:'text/plain;charset=utf-8'}));
-  a.href=url; a.download='synthese-empreinte-ia.txt'; document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(function(){ URL.revokeObjectURL(url); },1000);
-  d.querySelector('.dlg-note').textContent='Fichier téléchargé.';
+  var note=d.querySelector('.dlg-note'), b=d.querySelector('[data-telecharger]');
+  if(!syCourant) return;
+  b.disabled=true; note.textContent='Préparation du PDF…';
+  M.rapportPDF(syCourant).then(function(pdf){
+    enregistrer(pdf,'synthese-empreinte-ia-mindw3b.pdf');
+    b.disabled=false; note.textContent='PDF téléchargé.';
+  },function(){
+    // Rendu impossible (navigateur très ancien) : on se rabat sur le texte.
+    enregistrer(new Blob([texte],{type:'text/plain;charset=utf-8'}),'synthese-empreinte-ia-mindw3b.txt');
+    b.disabled=false; note.textContent='Synthèse téléchargée en texte.';
+  });
 }
 
 function copier(d){
