@@ -81,6 +81,9 @@ $('toExpert').addEventListener('click',function(e){
   window.location.href=this.getAttribute('href');
 });
 
+/* ---------- Synthèse et audit : assets/js/contact.js ---------- */
+M.etatCourant=function(){ return {mode:'simple',donnees:state}; };
+
 /* ---------- Résultat ---------- */
 function update(){
   syncButtons();

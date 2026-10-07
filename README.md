@@ -19,9 +19,16 @@ Pour un même usage, les deux versions donnent des ordres de grandeur proches ma
 - Obtenir l'électricité, les émissions de gaz à effet de serre et l'eau consommée, par mois ou par an, avec une fourchette basse, centrale et haute.
 - Voir d'où viennent les émissions : calcul GPU, serveur et veille, refroidissement, fabrication du matériel, entraînement amorti.
 - Simuler des leviers d'optimisation : réduction des tokens d'entrée et de sortie, routage vers un modèle léger.
-- Copier une synthèse texte des résultats.
+## Synthèse et demande d'audit
 
-Les saisies restent dans le navigateur de l'utilisateur (localStorage). Aucune donnée n'est envoyée à un serveur.
+Le bloc résultat des deux versions propose deux actions :
+
+- **Faire auditer nos usages** : formulaire (nom, entreprise, email, téléphone et message facultatifs, consentement). Mind W3B reçoit la demande par email, avec la synthèse du calcul en pièce jointe (`synthese-calcul.txt`) ; « Répondre » écrit directement au visiteur.
+- **Recevoir la synthèse** : le visiteur saisit son email et reçoit sa synthèse dans un email aux couleurs de Mind W3B. Mind W3B reçoit une notification à chaque envoi, qui indique si le visiteur a coché la case des actualités (le sujet commence alors par `[Actualités : oui]`). Le texte reste copiable après l'envoi.
+
+Les saisies restent dans le navigateur de l'utilisateur (localStorage) tant qu'il n'envoie pas l'un de ces formulaires. Les fonctions d'envoi recalculent la synthèse à partir des réponses, avec le même moteur que les pages : aucun texte venant du navigateur n'est recopié tel quel dans les emails. Elles ne stockent rien : les données ne vivent que dans les emails.
+
+Protections contre les abus : champ piège invisible, délai minimum avant envoi, vérification de l'origine de la requête, limite de 5 envois par IP toutes les 10 minutes et de 3 synthèses par adresse email par heure (compteurs en mémoire, approximatifs sur Vercel).
 
 ## Méthode
 
@@ -43,18 +50,26 @@ Le périmètre s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavesto
 .
 ├── index.html               Version simple (page d'accueil)
 ├── expert.html              Mode expert, servi en /expert
+├── confidentialite.html     Politique de confidentialité, servie en /confidentialite
+├── api/
+│   ├── synthese.js          POST /api/synthese : synthèse au visiteur, notification à Mind W3B
+│   ├── audit.js             POST /api/audit : demande d'audit à Mind W3B
+│   └── _lib/                Outils communs et gabarits des emails (non exposés)
 ├── assets/
-│   ├── css/simple.css       Styles de la version simple
+│   ├── css/simple.css       Styles de la version simple et de la politique de confidentialité
 │   ├── css/style.css        Styles du mode expert (thèmes clair et sombre)
-│   ├── js/moteur.js         Référentiels et formules, partagés par les deux pages
+│   ├── css/contact.css      Fenêtres « Faire auditer nos usages » et « Recevoir la synthèse »
+│   ├── js/moteur.js         Référentiels et formules, partagés par les deux pages et par api/
+│   ├── js/synthese.js       Texte de la synthèse, partagé par les deux pages et par api/
 │   ├── js/simple.js         Interface de la version simple
 │   ├── js/calculateur.js    Interface du mode expert
+│   ├── js/contact.js        Formulaires de synthèse et d'audit
 │   └── img/                 Logo, favicon, image de partage
 ├── vercel.json              Configuration d'hébergement
 └── CHANGELOG.md             Historique des versions
 ```
 
-Site statique, sans dépendance ni étape de build. Seules les polices Sora et Manrope sont chargées depuis Google Fonts.
+Site statique, sans dépendance ni étape de build, plus deux fonctions Vercel (Node 18 ou plus récent) qui appellent l'API de Resend. Seules les polices Sora et Manrope sont chargées depuis Google Fonts.
 
 ## Lancer en local
 
@@ -65,6 +80,8 @@ npx serve .
 ```
 
 Puis ouvrir http://localhost:3000/ et http://localhost:3000/expert.
+
+`npx serve` ne fait pas tourner les fonctions de `api/` : pour tester les envois, utiliser `npx vercel dev` avec les variables d'environnement ci-dessous.
 
 La CSP (`script-src 'self'`) interdit tout script inline et tout attribut `onclick` : les interactions passent uniquement par `addEventListener`.
 
@@ -84,6 +101,23 @@ Après une modification de méthode, pensez à mettre à jour le tableau de la s
 ## Déploiement
 
 Le dépôt est relié à Vercel : chaque push sur `main` redéploie le site.
+
+### Envoi des emails (Resend)
+
+1. Dans Resend, ajouter un domaine d'envoi (de préférence un sous-domaine, par exemple `send.mindw3b.co`), puis créer chez l'hébergeur DNS les enregistrements indiqués (SPF, DKIM, MX). Attendre que le domaine soit vérifié. Une règle DMARC sur `mindw3b.co` est recommandée.
+2. Créer une clé API avec l'accès « Sending access », limitée à ce domaine.
+3. Dans Vercel (Settings → Environment Variables, pour Production et Preview) :
+
+| Variable | Exemple | Rôle |
+| --- | --- | --- |
+| `RESEND_API_KEY` | `re_…` | Clé API Resend (obligatoire) |
+| `MAIL_FROM` | `Mind W3B <calculateur@send.mindw3b.co>` | Expéditeur, sur le domaine vérifié |
+| `MAIL_TO` | `nolan.nabeth@mindw3b.co` | Destinataire des demandes et notifications (valeur par défaut) |
+| `SITE_URL` | `https://calculateur.mindw3b.co` | Adresse du site, pour le logo et les liens des emails (valeur par défaut) |
+
+4. Redéployer pour que les variables soient prises en compte.
+
+Sans `RESEND_API_KEY`, les formulaires affichent une erreur et proposent d'écrire directement à Mind W3B.
 
 ## Licence
 

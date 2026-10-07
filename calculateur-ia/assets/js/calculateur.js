@@ -126,7 +126,6 @@ function setRange(id,lo,mid,hi,f){
   $('l'+id).textContent='Basse '+j(f(lo));
   $('h'+id).textContent='Haute '+j(f(hi));
 }
-var last=null;
 function update(){
   var p=state.period, res=compute(state.lv), base=compute({inR:0,outR:0,route:0});
   var lo=res[0], c=res[1], hi=res[2];
@@ -159,32 +158,13 @@ function update(){
     $('gain').innerHTML='Avec ces leviers : <b class="num">−'+nf(g*100,0)+' %</b> d\'émissions, soit <b class="num">'+j(fC((base[1].c-c.c)*12))+'</b> évités par an (estimation centrale).';
   } else $('gain').textContent='Aucun levier activé.';
 
-  last={lo:lo,c:c,hi:hi,p:p,base:base[1],anyLv:anyLv};
+  document.querySelectorAll('[data-contact]').forEach(function(b){ b.disabled=!(c.req>0); });
   save();
 }
 
-/* ---------- Synthèse ---------- */
-$('copyBtn').addEventListener('click',function(){
-  if(!last) return;
-  var L=last, p=L.p, per=p===12?'par an':'par mois';
-  var t='Empreinte environnementale de l\'IA ('+per+'), méthode Mind W3B v1\n\n';
-  t+='Émissions : '+j(fC(L.c.c*p))+' (fourchette '+j(fC(L.lo.c*p))+' à '+j(fC(L.hi.c*p))+')\n';
-  t+='Électricité : '+j(fE(L.c.e*p))+' (fourchette '+j(fE(L.lo.e*p))+' à '+j(fE(L.hi.e*p))+')\n';
-  t+='Eau : '+j(fW(L.c.w*p))+' (fourchette '+j(fW(L.lo.w*p))+' à '+j(fW(L.hi.w*p))+')\n\nUsages :\n';
-  state.ucs.forEach(function(uc,i){
-    var m=MODELS.find(function(x){return x.id===uc.model;});
-    t+='- '+uc.name+' ('+(m?m.n:'')+') : '+j(fC(L.c.uc[i]*p))+'\n';
-  });
-  if(L.anyLv) t+='\nLeviers simulés : −'+nf((1-L.c.c/L.base.c)*100,0)+' % d\'émissions.\n';
-  t+='\nLes tailles des modèles fermés sont estimées : les résultats sont des ordres de grandeur.';
-  function ok(){ $('copyNote').textContent='Synthèse copiée.'; setTimeout(function(){$('copyNote').textContent='';},2500); }
-  function fallback(){
-    var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select();
-    try{ document.execCommand('copy'); ok(); }catch(e){ $('copyNote').textContent='Copie impossible ici. Sélectionnez le texte à la main.'; }
-    document.body.removeChild(ta);
-  }
-  try{ navigator.clipboard.writeText(t).then(ok,fallback); }catch(e){ fallback(); }
-});
+/* ---------- Synthèse et audit : assets/js/contact.js ---------- */
+M.etatCourant=function(){ return {mode:'expert',donnees:state}; };
+
 $('resetBtn').addEventListener('click',function(){
   state=JSON.parse(JSON.stringify(DEFAULT));
   LV.forEach(function(l){$(l[0]).value=0;});
