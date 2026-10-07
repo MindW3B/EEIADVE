@@ -78,7 +78,7 @@ Le périmètre s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavesto
 └── CHANGELOG.md             Historique des versions
 ```
 
-Site statique, sans dépendance ni étape de build, plus trois fonctions Vercel (Node 18 ou plus récent) qui enregistrent les formulaires dans une base Upstash Redis. Les polices Sora et Manrope sont hébergées sur le site (`assets/fonts/`, licence SIL OFL) : aucune ressource n'est chargée depuis un service tiers.
+Site statique, sans dépendance ni étape de build, plus trois fonctions Vercel (Node 18 ou plus récent) qui enregistrent les formulaires dans une base Upstash Redis. Les polices Sora et Manrope sont hébergées sur le site (`assets/fonts/`, licence SIL OFL) : aucune ressource n'est chargée depuis un service tiers. La mesure d'audience passe par Vercel Web Analytics, servi depuis le domaine du site (`/_vercel/insights/`), sans cookie.
 
 ## Lancer en local
 
@@ -118,6 +118,15 @@ Le dépôt est relié à Vercel : chaque push sur `main` redéploie le site.
 3. Redéployer pour que les variables soient prises en compte.
 
 Sans base reliée, les formulaires affichent une erreur et proposent d'écrire directement à Mind W3B.
+
+### Mesure d'audience
+
+Les pages publiques (`/`, `/expert`, `/confidentialite`) chargent `/_vercel/insights/script.js`. La page `/admin` n'est pas mesurée.
+
+1. Dans Vercel : onglet **Analytics** du projet → **Enable** (Web Analytics).
+2. Redéployer. Tant que l'option n'est pas activée, le script renvoie une 404 sans effet sur le site.
+
+Les statistiques se consultent dans l'onglet Analytics. Le script est servi par le site lui-même : la politique de sécurité (`script-src 'self'`, `connect-src 'self'`) n'a pas besoin d'être modifiée.
 
 ## Licence
 
