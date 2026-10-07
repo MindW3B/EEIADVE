@@ -2,11 +2,11 @@
 
 ## v1.2.0 (octobre 2026)
 
-Demande d'audit, synthèse téléchargeable et inscription aux actualités.
+Demande d'audit et synthèse en PDF.
 
 - « Faire auditer nos usages » ouvre un formulaire de contact dans les deux versions. La demande est enregistrée avec la synthèse du calcul.
-- « Télécharger la synthèse » remplace « Copier la synthèse » : téléchargement en .txt ou copie, et inscription facultative aux actualités de Mind W3B.
-- Les formulaires sont enregistrés dans une base Upstash Redis (fonctions Vercel `api/audit.js`, `api/actualites.js`) et se consultent sur `/admin`, protégée par mot de passe, avec export CSV et suppression.
+- « Télécharger la synthèse » remplace « Copier la synthèse » : contre un email valide, le visiteur obtient un récapitulatif PDF aux couleurs de Mind W3B, avec une case facultative pour les actualités.
+- Les formulaires sont enregistrés dans une base Upstash Redis (fonctions Vercel `api/audit.js`, `api/synthese.js`) et se consultent sur `/admin`, protégée par mot de passe, avec export CSV et suppression.
 - Texte de la synthèse extrait dans `assets/js/synthese.js`, partagé par les pages et les fonctions, qui le recalculent côté serveur.
 - Nouvelle page `/confidentialite`, liée depuis le pied de page des deux versions.
 
