@@ -25,8 +25,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/assets/css/style.css?v=3">
-<script src="/assets/js/theme.js?v=3"></script>
+<link rel="stylesheet" href="/assets/css/style.css?v=4">
+<link rel="stylesheet" href="/assets/css/contact.css?v=4">
+<script src="/assets/js/theme.js?v=4"></script>
 </head>
 <body>
 <div class="wrap">
@@ -102,10 +103,10 @@
       <ul class="legend" id="legend"></ul>
 
       <div class="actions">
-        <button class="btn" id="copyBtn" type="button">Copier la synthèse</button>
+        <button class="btn" type="button" data-contact="audit">Faire auditer nos usages</button>
+        <button class="btn alt" type="button" data-contact="synthese">Recevoir la synthèse</button>
         <button class="btn ghost" id="resetBtn" type="button">Réinitialiser</button>
       </div>
-      <p class="note-ok" id="copyNote"></p>
     </aside>
   </div>
 
@@ -186,11 +187,13 @@
       </div>
     </details>
 
-    <p class="foot">Méthode Mind W3B v1, octobre 2026. Les tailles des modèles fermés sont des estimations, et les valeurs d'intensité carbone et d'eau sont des ordres de grandeur à remplacer par les données de votre fournisseur quand elles existent. Vos saisies restent dans ce navigateur.</p>
+    <p class="foot">Méthode Mind W3B v1, octobre 2026. Les tailles des modèles fermés sont des estimations, et les valeurs d'intensité carbone et d'eau sont des ordres de grandeur à remplacer par les données de votre fournisseur quand elles existent. Vos saisies restent dans ce navigateur, sauf si vous demandez votre synthèse ou un audit. <a href="/confidentialite">Politique de confidentialité</a></p>
   </section>
 </div>
 
-<script src="/assets/js/moteur.js?v=3" defer></script>
-<script src="/assets/js/calculateur.js?v=3" defer></script>
+<script src="/assets/js/moteur.js?v=4" defer></script>
+<script src="/assets/js/synthese.js?v=4" defer></script>
+<script src="/assets/js/calculateur.js?v=4" defer></script>
+<script src="/assets/js/contact.js?v=4" defer></script>
 </body>
 </html>

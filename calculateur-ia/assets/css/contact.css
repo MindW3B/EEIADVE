@@ -1,0 +1,56 @@
+/* Formulaires d'audit et de synthèse, partagés par les deux pages | Mind W3B
+   Les couleurs reprennent les variables de la page : simple.css (--card, --acc…) ou style.css (--surface, --vio…). */
+.dlg{
+  --d-bg:var(--card,var(--surface)); --d-field:var(--bg); --d-line:var(--pill,var(--line)); --d-acc:var(--acc,var(--vio));
+  width:min(540px,calc(100vw - 24px)); max-height:calc(100dvh - 24px); margin:auto; padding:0; overflow:auto;
+  background:var(--d-bg); color:var(--txt); border:1px solid var(--d-line); border-radius:20px;
+  font:15px/1.55 var(--sans); box-shadow:0 24px 60px rgba(7,5,26,.35);
+}
+.dlg::backdrop{background:rgba(7,5,26,.62);}
+.dlg::before{content:""; display:block; height:5px; background:linear-gradient(90deg,#ff2fb5,#9a7bff,#4a6bff);}
+.dlg-form,.dlg-done,.dlg-copie{padding:24px 26px;}
+.dlg-done+.dlg-copie{padding-top:0;}
+.dlg h2{font:700 22px/1.25 var(--display); letter-spacing:-.02em; margin:0 40px 6px 0; color:var(--txt);}
+.dlg-sub{margin:0 0 18px; color:var(--mut); font-size:14.5px;}
+.dlg-sub b{color:var(--txt); word-break:break-all;}
+.dlg-x{position:absolute; top:14px; right:14px; display:grid; place-items:center; width:44px; height:44px; padding:0; border:0; border-radius:50%; background:transparent; color:var(--mut); cursor:pointer;}
+.dlg-x:hover{color:var(--txt); background:var(--d-field);}
+
+.dlg-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 14px;}
+@media (max-width:520px){ .dlg-grid{grid-template-columns:1fr;} .dlg-form,.dlg-done,.dlg-copie{padding:20px 18px;} }
+.dlg-f{margin-bottom:14px;}
+.dlg-f label{display:block; margin-bottom:5px; font-weight:600; font-size:14px; color:var(--txt);}
+.dlg-f label span{font-weight:500; color:var(--mut);}
+.dlg input[type=text],.dlg input[type=email],.dlg input[type=tel],.dlg textarea{
+  display:block; width:100%; min-height:46px; padding:10px 12px; border:1px solid var(--d-line); border-radius:10px;
+  background:var(--d-field); color:var(--txt); font:500 15px var(--sans); box-sizing:border-box;
+}
+.dlg textarea{resize:vertical; min-height:84px; line-height:1.45;}
+.dlg input:focus-visible,.dlg textarea:focus-visible{outline:2px solid var(--d-acc); outline-offset:1px; border-color:var(--d-acc);}
+.dlg input:user-invalid,.dlg textarea:user-invalid{border-color:#d1148c;}
+
+.dlg-check{display:flex; gap:10px; align-items:flex-start; margin:4px 0 12px; font-size:14px; color:var(--txt); cursor:pointer;}
+.dlg-check input{flex:none; width:20px; height:20px; margin:1px 0 0; accent-color:var(--d-acc); cursor:pointer;}
+.dlg-mention{margin:0 0 12px; color:var(--mut); font-size:13px;}
+.dlg a{color:var(--d-acc); font-weight:600;}
+.dlg-err{margin:0 0 12px; color:#d1148c; font-size:14px; font-weight:600;}
+.dlg-err:empty{display:none;}
+[data-theme="dark"] .dlg-err{color:#ff5fc6;}
+
+.dlg-btn{display:flex; align-items:center; justify-content:center; width:100%; min-height:50px; padding:12px 18px; border:0; border-radius:12px;
+  background:linear-gradient(90deg,#d1148c,#5b3fd6); color:#fff; font:700 16px var(--display); cursor:pointer;}
+.dlg-btn:hover{filter:brightness(1.08);}
+.dlg-btn:disabled{opacity:.6; cursor:default; filter:none;}
+.dlg-btn.ghost{background:transparent; color:var(--d-acc); border:1.5px solid var(--d-line); font-size:15px;}
+.dlg-btn.ghost:hover{border-color:var(--d-acc);}
+.dlg-btn:focus-visible,.dlg-x:focus-visible{outline:3px solid var(--d-acc); outline-offset:2px;}
+
+.dlg-done{outline:none;}
+.dlg-done .dlg-sub{margin-bottom:4px;}
+.dlg-ok-ic{display:grid; place-items:center; width:48px; height:48px; margin:0 0 14px; border-radius:50%; background:linear-gradient(135deg,#d1148c,#5b3fd6); color:#fff; font:700 24px/1 var(--display);}
+.dlg-note{margin:8px 0 0; min-height:1.2em; font-size:13.5px; color:var(--mut);}
+.dlg-texte{margin-top:10px; min-height:160px; font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;}
+
+/* Champ piège : hors écran, ignoré par les lecteurs d'écran et la tabulation. */
+.dlg-hp{position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;}
+@media (prefers-reduced-motion:reduce){ .dlg-btn{transition:none;} }
