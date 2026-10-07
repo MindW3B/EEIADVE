@@ -1,5 +1,10 @@
 # Historique des versions
 
+## Non publié
+
+- Mesure d'audience avec Vercel Web Analytics sur les pages publiques (sans cookie, `/admin` exclue).
+- Politique de confidentialité complétée : section « Mesure d'audience », rôle de Vercel et durée de conservation des statistiques.
+
 ## v1.2.0 (octobre 2026)
 
 Demande d'audit et synthèse en PDF.
