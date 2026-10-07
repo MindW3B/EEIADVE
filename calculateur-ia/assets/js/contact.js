@@ -1,6 +1,6 @@
 /*!
  * Calculateur d'empreinte environnementale de l'IA en entreprise
- * Formulaire « Faire auditer nos usages » et synthèse en PDF, partagés par les deux pages
+ * Formulaire « Faire auditer vos usages » et synthèse en PDF, partagés par les deux pages
  * Mind W3B
  * https://www.mindw3b.co/
  */
@@ -19,7 +19,7 @@ function champ(nom,lab,type,attrs,facultatif){
 var HTML={
   audit:'<dialog class="dlg" id="dlg-audit" aria-labelledby="dlg-audit-t">'+FERMER+
     '<form class="dlg-form">'+
-      '<h2 id="dlg-audit-t">Faire auditer nos usages</h2>'+
+      '<h2 id="dlg-audit-t">Faire auditer vos usages</h2>'+
       '<p class="dlg-sub">Laissez vos coordonnées, Mind W3B vous recontacte. La synthèse de votre calcul est transmise automatiquement avec votre demande.</p>'+
       '<div class="dlg-grid">'+
         champ('nom','Nom','text','autocomplete="name" maxlength="100" required autofocus')+
@@ -51,7 +51,7 @@ var HTML={
       '<label class="dlg-check"><input type="checkbox" name="actualites"><span>Je souhaite aussi recevoir les actualités de Mind W3B (facultatif, désinscription à tout moment).</span></label>'+
       '<p class="dlg-mention">Votre email est enregistré avec la synthèse de votre calcul, et Mind W3B pourra vous écrire à son sujet. Plus de détails dans la '+POLITIQUE+'.</p>'+
       '<p class="dlg-err" role="alert"></p>'+
-      '<button type="submit" class="dlg-btn">Télécharger ma synthèse</button>'+
+      '<button type="submit" class="dlg-btn">Télécharger votre synthèse</button>'+
     '</form>'+
     '<div class="dlg-done" hidden tabindex="-1">'+
       '<p class="dlg-ok-ic" aria-hidden="true">✓</p>'+
@@ -172,7 +172,7 @@ document.addEventListener('click',function(e){
   var b=e.target.closest&&e.target.closest('[data-contact]');
   if(b&&!b.disabled) ouvrir(b.dataset.contact);
 });
-// Lien « Faire auditer nos usages » de l'email de synthèse : /#audit
+// Lien « Faire auditer vos usages » de l'email de synthèse : /#audit
 if(location.hash==='#audit'){
   try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){}
   ouvrir('audit');

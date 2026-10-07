@@ -23,8 +23,8 @@ Pour un même usage, les deux versions donnent des ordres de grandeur proches ma
 
 Le bloc résultat des deux versions propose deux actions :
 
-- **Faire auditer nos usages** : formulaire (nom, entreprise, email, téléphone et message facultatifs, consentement). La demande est enregistrée dans la base du projet avec la synthèse du calcul.
-- **Télécharger la synthèse** : le visiteur saisit un email valide pour obtenir un récapitulatif PDF aux couleurs de Mind W3B (une page en version simple). Une case facultative permet de recevoir les actualités. L'email est enregistré avec la synthèse ; le PDF est dessiné dans le navigateur (`assets/js/rapport.js`, sans bibliothèque). Le texte reste copiable.
+- **Faire auditer vos usages** : formulaire (nom, entreprise, email, téléphone et message facultatifs, consentement). La demande est enregistrée dans la base du projet avec la synthèse du calcul.
+- **Télécharger votre synthèse** : le visiteur saisit un email valide pour obtenir un récapitulatif PDF aux couleurs de Mind W3B (une page en version simple). Une case facultative permet de recevoir les actualités. L'email est enregistré avec la synthèse ; le PDF est dessiné dans le navigateur (`assets/js/rapport.js`, sans bibliothèque). Le texte reste copiable.
 
 Les formulaires reçus se consultent sur **`/admin`**, protégée par mot de passe : liste filtrable, détail et synthèse de chaque demande, export CSV (séparateur « ; », lisible par Excel) et suppression.
 
@@ -62,7 +62,7 @@ Le périmètre s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavesto
 ├── assets/
 │   ├── css/simple.css       Styles de la version simple et de la politique de confidentialité
 │   ├── css/style.css        Styles du mode expert (thèmes clair et sombre)
-│   ├── css/contact.css      Fenêtres « Faire auditer nos usages » et « Télécharger la synthèse »
+│   ├── css/contact.css      Fenêtres « Faire auditer vos usages » et « Télécharger votre synthèse »
 │   ├── css/admin.css        Styles de la page /admin
 │   ├── js/moteur.js         Référentiels et formules, partagés par les deux pages et par api/
 │   ├── js/synthese.js       Texte de la synthèse, partagé par les deux pages et par api/
