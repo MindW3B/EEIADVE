@@ -11,11 +11,11 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/assets/img/favicon.png">
 <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/assets/css/simple.css?v=6">
-<script src="/assets/js/theme.js?v=6"></script>
+<link rel="preload" href="/assets/fonts/sora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/fonts.css?v=7">
+<link rel="stylesheet" href="/assets/css/simple.css?v=7">
+<script src="/assets/js/theme.js?v=7"></script>
 </head>
 <body>
 <div class="wrap">
@@ -66,7 +66,7 @@
       <ul>
         <li><b>Données&nbsp;:</b> votre adresse email, votre choix de recevoir ou non les actualités de Mind W3B, vos réponses au calculateur et la date de la demande.</li>
         <li><b>Utilisation&nbsp;:</b> vous donner accès à la synthèse en PDF, savoir qui utilise le calculateur et pouvoir vous écrire au sujet de votre calcul. Le PDF est fabriqué dans votre navigateur.</li>
-        <li><b>Base légale&nbsp;:</b> <mark class="todo">[À VALIDER : intérêt légitime de Mind W3B à connaître les utilisateurs du calculateur et à leur proposer ses services, l'email étant demandé en contrepartie du téléchargement, avec possibilité de s'y opposer à tout moment]</mark>.</li>
+        <li><b>Base légale&nbsp;:</b> l'intérêt légitime de Mind W3B à connaître les utilisateurs du calculateur et à leur proposer ses services. L'email est demandé en contrepartie du téléchargement&nbsp;; vous pouvez vous opposer à tout moment à son utilisation.</li>
       </ul>
       <h3>Actualités de Mind W3B (case facultative)</h3>
       <ul>
@@ -78,7 +78,7 @@
       <ul>
         <li><b>Données&nbsp;:</b> votre nom, votre entreprise, votre email, votre téléphone et votre message s'ils sont renseignés, vos réponses au calculateur et la date de votre accord.</li>
         <li><b>Utilisation&nbsp;:</b> répondre à votre demande et préparer un éventuel audit.</li>
-        <li><b>Base légale&nbsp;:</b> les mesures précontractuelles prises à votre demande. <mark class="todo">[À VALIDER : base légale retenue]</mark></li>
+        <li><b>Base légale&nbsp;:</b> les mesures précontractuelles prises à votre demande.</li>
       </ul>
       <h3>Données techniques</h3>
       <p>Pour limiter les envois abusifs, l'adresse IP de l'appareil qui envoie un formulaire est gardée quelques minutes en mémoire, puis oubliée. Elle n'est pas enregistrée avec vos données. L'hébergeur du site conserve par ailleurs des journaux techniques de connexion, de 1 à 3 mois au plus selon les besoins.</p>
@@ -93,7 +93,6 @@
           <tbody>
             <tr><td>Upstash, Inc.</td><td>Base de données où sont enregistrés les formulaires</td><td>Données hébergées dans l'Union européenne (Allemagne et Irlande). Société établie aux États-Unis&nbsp;: transferts encadrés par les clauses contractuelles types de la Commission européenne, prévues par l'accord de traitement des données d'Upstash.</td></tr>
             <tr><td>Vercel Inc.</td><td>Hébergement du site et des formulaires</td><td>Site et formulaires exécutés en Europe (Allemagne, Irlande, France). Société établie aux États-Unis, certifiée au Data Privacy Framework UE–États-Unis&nbsp;; transferts également encadrés par les clauses contractuelles types de la Commission européenne.</td></tr>
-            <tr><td>Google</td><td>Polices de caractères (Google Fonts)</td><td>États-Unis. Votre navigateur télécharge les polices depuis les serveurs de Google, qui reçoivent votre adresse IP. <mark class="todo">[À VALIDER : maintenir ou héberger les polices sur le site]</mark></td></tr>
           </tbody>
         </table>
       </div>

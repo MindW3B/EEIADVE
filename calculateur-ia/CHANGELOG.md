@@ -9,6 +9,7 @@ Demande d'audit et synthèse en PDF.
 - Les formulaires sont enregistrés dans une base Upstash Redis (fonctions Vercel `api/audit.js`, `api/synthese.js`) et se consultent sur `/admin`, protégée par mot de passe, avec export CSV et suppression.
 - Texte de la synthèse extrait dans `assets/js/synthese.js`, partagé par les pages et les fonctions, qui le recalculent côté serveur.
 - Nouvelle page `/confidentialite`, liée depuis le pied de page des deux versions.
+- Polices Sora et Manrope hébergées sur le site : plus aucun appel à Google Fonts.
 
 ## v1.1.0 (octobre 2026)
 

@@ -71,12 +71,14 @@ Le périmètre s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavesto
 │   ├── js/rapport.js        Synthèse en PDF (canvas puis PDF, sans dépendance)
 │   ├── js/contact.js        Fenêtres de synthèse et d'audit
 │   ├── js/admin.js          Page /admin
+│   ├── css/fonts.css        Déclaration des polices hébergées
+│   ├── fonts/               Sora et Manrope (woff2, licence SIL OFL)
 │   └── img/                 Logo, favicon, image de partage
 ├── vercel.json              Configuration d'hébergement
 └── CHANGELOG.md             Historique des versions
 ```
 
-Site statique, sans dépendance ni étape de build, plus trois fonctions Vercel (Node 18 ou plus récent) qui enregistrent les formulaires dans une base Upstash Redis. Seules les polices Sora et Manrope sont chargées depuis Google Fonts.
+Site statique, sans dépendance ni étape de build, plus trois fonctions Vercel (Node 18 ou plus récent) qui enregistrent les formulaires dans une base Upstash Redis. Les polices Sora et Manrope sont hébergées sur le site (`assets/fonts/`, licence SIL OFL) : aucune ressource n'est chargée depuis un service tiers.
 
 ## Lancer en local
 
