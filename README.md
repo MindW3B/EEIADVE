@@ -71,6 +71,7 @@ Le périmètre s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavesto
 │   ├── js/rapport.js        Synthèse en PDF (canvas puis PDF, sans dépendance)
 │   ├── js/contact.js        Fenêtres de synthèse et d'audit
 │   ├── js/admin.js          Page /admin
+│   ├── js/email.js          Adresse de contact assemblée dans la page (jamais en clair)
 │   ├── css/fonts.css        Déclaration des polices hébergées
 │   ├── fonts/               Sora et Manrope (woff2, licence SIL OFL)
 │   └── img/                 Logo, favicon, image de partage
