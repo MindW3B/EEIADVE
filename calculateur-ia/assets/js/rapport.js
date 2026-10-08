@@ -1,8 +1,5 @@
 /*!
- * Calculateur d'empreinte environnementale de l'IA en entreprise
- * Synthèse en PDF aux couleurs de Mind W3B, dessinée dans le navigateur (canvas) puis assemblée en PDF, sans bibliothèque
- * Mind W3B
- * https://www.mindw3b.co/
+ * Calculateur d'empreinte de l'IA, Mind W3B : synthèse en PDF, dessinée sur canvas puis assemblée sans bibliothèque
  */
 (function(){
 "use strict";
@@ -12,7 +9,7 @@ var HAUT_PIED=64, BAS=H-HAUT_PIED-8;         // zone réservée au pied de page
 var C={nuit:'#130f2c',violet:'#5b3fd6',rose:'#ff2fb5',magenta:'#d1148c',lilas:'#9a7bff',bleu:'#4a6bff',mut:'#5d5886',doux:'#f3f1ff',ligne:'#e4e0f3',nuitDoux:'#c3bde6'};
 var SORA='"Sora","Manrope",system-ui,-apple-system,"Segoe UI",Arial,sans-serif';
 var MAN='"Manrope",system-ui,-apple-system,"Segoe UI",Arial,sans-serif';
-var SITE='https://calculateur.mindw3b.co/', AGENCE='https://www.mindw3b.co/';
+var SITE=M.SITE, HOTE=SITE.replace(/^https?:\/\/|\/$/g,''), AGENCE='https://www.mindw3b.co/';
 
 function police(ctx,poids,taille,famille){ ctx.font=poids+' '+taille+'px '+famille; }
 function lignes(ctx,texte,largeur){
@@ -101,14 +98,14 @@ Mise.prototype.section=function(t,suite){
   this.y+=30;
 };
 
-// Indicateurs en tuiles, deux par ligne.
+// Indicateurs en tuiles, trois par ligne.
 Mise.prototype.tuiles=function(liste){
   var ctx=this.ctx, gap=12, nb=3, w=(W-2*MX-gap*(nb-1))/nb, self=this;
   for(var i=0;i<liste.length;i+=nb){
-    var paire=liste.slice(i,i+nb).map(function(t){ police(ctx,600,15.5,SORA); return {lab:t[0],val:lignes(ctx,t[1],w-32)}; });
-    var h=Math.max.apply(null,paire.map(function(t){ return 46+t.val.length*21; }))+6;
+    var rang=liste.slice(i,i+nb).map(function(t){ police(ctx,600,15.5,SORA); return {lab:t[0],val:lignes(ctx,t[1],w-32)}; });
+    var h=Math.max.apply(null,rang.map(function(t){ return 46+t.val.length*21; }))+6;
     self.place(h); ctx=self.ctx;
-    paire.forEach(function(t,j){
+    rang.forEach(function(t,j){
       var x=MX+j*(w+gap), y=self.y;
       ctx.fillStyle=C.doux; rond(ctx,x,y,w,h,14); ctx.fill();
       police(ctx,600,12,MAN); ctx.fillStyle=C.mut; ctx.fillText(t.lab,x+16,y+26);
@@ -164,7 +161,7 @@ Mise.prototype.appel=function(){
   lignes(ctx,'Mind W3B audite les usages d’IA des entreprises pour réduire leur empreinte et leur facture. Parlons de vos usages réels.',w-56)
     .forEach(function(s,i){ ctx.fillText(s,MX+28,y+60+i*20); });
   police(ctx,700,14.5,MAN); ctx.fillStyle='#fff';
-  var t1='www.mindw3b.co', t2='calculateur.mindw3b.co', x2=MX+28+ctx.measureText(t1).width+28;
+  var t1='www.mindw3b.co', t2=HOTE, x2=MX+28+ctx.measureText(t1).width+28;
   ctx.fillText(t1,MX+28,y+104); ctx.fillText(t2,x2,y+104);
   ctx.globalAlpha=.6; ctx.fillText('·',x2-17,y+104); ctx.globalAlpha=1;
   this.lien(MX+28,y+88,ctx.measureText(t1).width+4,22,AGENCE);
@@ -203,7 +200,7 @@ function assembler(pages,titre){
   add('%PDF-1.4\n%âãÏÓ\n');
   obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
   obj(2,'<< /Type /Pages /Count '+pages.length+' /Kids ['+plan.map(function(o){ return o.page+' 0 R'; }).join(' ')+'] >>');
-  obj(3,'<< /Title '+hex16(titre)+' /Author (Mind W3B) /Creator (calculateur.mindw3b.co) >>');
+  obj(3,'<< /Title '+hex16(titre)+' /Author (Mind W3B) /Creator ('+HOTE+') >>');
   pages.forEach(function(p,i){
     var o=plan[i];
     obj(o.page,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+PW+' '+PH+'] /Resources << /XObject << /Im0 '+o.image+' 0 R >> >> /Contents '+o.contenu+' 0 R'+
@@ -244,7 +241,7 @@ function rapport(sy){
     if(sy.gain) d.encart(sy.gain);
     d.section(sy.reponsesTitre,40); d.tableau(sy.reponses);
     d.appel();
-    d.pieds(sy.note+' Méthode détaillée sur calculateur.mindw3b.co/expert.');
+    d.pieds(sy.note+' Méthode détaillée sur '+HOTE+'/expert.');
     return Promise.all(d.pages.map(function(p){ return versOctets(p.cv).then(function(j){ return {jpeg:j,l:p.cv.width,h:p.cv.height,liens:p.liens}; }); }));
   }).then(function(pages){ return assembler(pages,'Synthèse : empreinte de l’IA de votre entreprise'); });
 }

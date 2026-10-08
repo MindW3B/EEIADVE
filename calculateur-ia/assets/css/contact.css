@@ -1,5 +1,5 @@
-/* Formulaires d'audit et de synthèse, partagés par les deux pages | Mind W3B
-   Les couleurs reprennent les variables de la page : simple.css (--card, --acc…) ou style.css (--surface, --vio…). */
+/* Fenêtres d'audit et de synthèse | Mind W3B
+   Couleurs reprises de simple.css (--card, --acc) ou de style.css (--surface, --vio). */
 .dlg{
   --d-bg:var(--card,var(--surface)); --d-field:var(--bg); --d-line:var(--pill,var(--line)); --d-acc:var(--acc,var(--vio));
   width:min(540px,calc(100vw - 24px)); max-height:calc(100dvh - 24px); margin:auto; padding:0; overflow:auto;
@@ -8,16 +8,14 @@
 }
 .dlg::backdrop{background:rgba(7,5,26,.62);}
 .dlg::before{content:""; display:block; height:5px; background:linear-gradient(90deg,#ff2fb5,#9a7bff,#4a6bff);}
-.dlg-form,.dlg-done,.dlg-copie{padding:24px 26px;}
-.dlg-done+.dlg-copie{padding-top:0;}
+.dlg-form,.dlg-done{padding:24px 26px;}
 .dlg h2{font:700 22px/1.25 var(--display); letter-spacing:-.02em; margin:0 40px 6px 0; color:var(--txt);}
 .dlg-sub{margin:0 0 18px; color:var(--mut); font-size:14.5px;}
-.dlg-sub b{color:var(--txt); word-break:break-all;}
 .dlg-x{position:absolute; top:14px; right:14px; display:grid; place-items:center; width:44px; height:44px; padding:0; border:0; border-radius:50%; background:transparent; color:var(--mut); cursor:pointer;}
 .dlg-x:hover{color:var(--txt); background:var(--d-field);}
 
 .dlg-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 14px;}
-@media (max-width:520px){ .dlg-grid{grid-template-columns:1fr;} .dlg-form,.dlg-done,.dlg-copie{padding:20px 18px;} }
+@media (max-width:520px){ .dlg-grid{grid-template-columns:1fr;} .dlg-form,.dlg-done{padding:20px 18px;} }
 .dlg-f{margin-bottom:14px;}
 .dlg-f label{display:block; margin-bottom:5px; font-weight:600; font-size:14px; color:var(--txt);}
 .dlg-f label span{font-weight:500; color:var(--mut);}
@@ -53,7 +51,6 @@
 
 /* Champ piège : hors écran, ignoré par les lecteurs d'écran et la tabulation. */
 .dlg-hp{position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;}
-@media (prefers-reduced-motion:reduce){ .dlg-btn{transition:none;} }
 
 /* Synthèse en PDF */
 .dlg-pdf{position:relative; width:46px; height:56px; margin:0 0 16px; border-radius:6px 16px 6px 6px; background:linear-gradient(160deg,#d1148c,#5b3fd6); box-shadow:0 8px 20px rgba(91,63,214,.3);}

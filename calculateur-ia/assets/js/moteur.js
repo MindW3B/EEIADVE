@@ -1,11 +1,12 @@
 /*!
- * Calculateur d'empreinte environnementale de l'IA en entreprise
- * Moteur de calcul partagé (version simple et mode expert)
- * Mind W3B, méthode v1 (octobre 2026)
- * https://www.mindw3b.co/
+ * Calculateur d'empreinte de l'IA, Mind W3B : moteur de calcul (pages et api/)
+ * Méthode v1, octobre 2026
  */
 (function(root){
 "use strict";
+
+// Adresse publique du site. Pour la changer partout : ./changer-adresse.sh à la racine du dépôt.
+var SITE='https://eeiadve-calculateur-ia.vercel.app/';
 
 /* ---------- Référentiels ---------- */
 var MODELS=[
@@ -158,7 +159,6 @@ function totaliser(list,opt){
 function nbRepondues(a){
   var n=0;
   ['abonnement','reflexion','documents','europe'].forEach(function(k){ if(a[k]&&a[k]!=='nsp') n++; });
-  // TODO : le budget ne sert pour l'instant qu'à resserrer la fourchette. L'utiliser pour recouper le volume de requêtes.
   if(num(a.budget)>0) n++;
   return n;
 }
@@ -169,7 +169,15 @@ function estimationSimple(a){
   var n=nbRepondues(a), k=Math.max(1.35,3*Math.pow(0.82,n));
   var gain=c.kg>0?Math.round((1-o.kg/c.kg)*20)*5:0;
   var pts=Math.min(5,1+n);
-  return {kg:c.kg,kwh:c.kwh,l:c.l,req:c.req,lo:c.kg/k,hi:c.kg*k,k:k,repondues:n,points:pts,precision:PRECISION[pts-1],gain:gain};
+  // Les usages complémentaires comptent comme une réponse affichée, sans resserrer la fourchette.
+  var repondues=n+(a.extras&&a.extras.length?1:0);
+  return {kg:c.kg,kwh:c.kwh,l:c.l,req:c.req,lo:c.kg/k,hi:c.kg*k,repondues:repondues,points:pts,precision:PRECISION[pts-1],gain:gain};
+}
+// Équivalent voiture : en allers-retours Paris–Marseille (1 550 km) au-delà d'un trajet, en kilomètres en dessous.
+function voiture(kg){
+  var km=kg/HYP.car, ar=km/1550;
+  if(ar>=1) return {ar:ar};
+  return {km:km>=100?Math.round(km/10)*10:Math.max(1,Math.round(km))};
 }
 // Position (0 à 100) d'une valeur sur la barre de fourchette, échelle log centrée sur c.
 function posFourchette(v,c){ return Math.log(v/(c/3.2))/Math.log(3.2*3.2)*100; }
@@ -192,6 +200,6 @@ function versExpert(a){
   return {ucs:ucs,lv:{inR:0,outR:0,route:0},period:12,hyp:Object.assign({},HYP)};
 }
 
-root.MW3B={MODELS:MODELS,OPS:OPS,GRIDS:GRIDS,SC:SC,HYP_DEF:HYP_DEF,HYP:HYP,num:num,gpuSec:gpuSec,compute:compute,
-  requete:requete,OUTILS:OUTILS,EXTRAS:EXTRAS,estimationSimple:estimationSimple,posFourchette:posFourchette,versExpert:versExpert};
+root.MW3B={SITE:SITE,MODELS:MODELS,OPS:OPS,GRIDS:GRIDS,HYP_DEF:HYP_DEF,num:num,compute:compute,
+  OUTILS:OUTILS,EXTRAS:EXTRAS,estimationSimple:estimationSimple,voiture:voiture,posFourchette:posFourchette,versExpert:versExpert};
 })(typeof window!=='undefined'?window:globalThis);

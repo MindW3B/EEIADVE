@@ -2,7 +2,7 @@
 
 Outil gratuit de [Mind W3B](https://www.mindw3b.co/) pour estimer l'énergie, le carbone et l'eau consommés par les usages d'IA générative d'une entreprise.
 
-En ligne : https://calculateur.mindw3b.co/
+En ligne : https://eeiadve-calculateur-ia.vercel.app/
 
 ![Aperçu](assets/img/og-image.png)
 
@@ -110,6 +110,14 @@ Après une modification de méthode, pensez à mettre à jour le tableau de la s
 ## Déploiement
 
 Le dépôt est relié à Vercel : chaque push sur `main` redéploie le site.
+
+### Adresse du site
+
+L'adresse publique est définie par `SITE` dans `assets/js/moteur.js` (synthèse et PDF) et reprise dans les balises `canonical` et `og:` des pages, le README et la LICENSE. Pour la changer partout, depuis la racine du dépôt :
+
+```bash
+./changer-adresse.sh calculateur.mindw3b.co
+```
 
 ### Base de données des formulaires
 

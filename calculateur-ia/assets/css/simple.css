@@ -1,4 +1,4 @@
-/* Calculateur d'empreinte IA, version simple | Mind W3B */
+/* Version simple et pages annexes | Mind W3B */
 :root{
   --bg:#f6f5fc; --card:#ffffff; --border:#e4e0f3; --pill:#dcd8ee; --txt:#130f2c; --mut:#5d5886; --acc:#5b3fd6;
   --dark:#130f2c; --dark-txt:#f3f1ff; --dark-mut:#c3bde6; --pink:#ff2fb5;
@@ -78,7 +78,7 @@ input[type=number]:focus{border-color:var(--acc);}
 .more{display:block; width:100%; text-align:left; margin:4px 0 16px; padding:18px 22px; background:transparent; border:2px dashed var(--pill); border-radius:18px; cursor:pointer;}
 .more:hover{border-color:var(--acc);}
 .more-t{display:block; font:600 17px var(--display); color:var(--acc);}
-.more-t::after{content:" +"; }
+.more-t::after{content:" +";}
 .more[aria-expanded="true"] .more-t::after{content:" −";}
 .more-s{display:block; color:var(--mut); font-size:14.5px; margin-top:2px;}
 .more-c{display:inline-block; margin-top:10px; padding:3px 10px; border-radius:999px; background:var(--chip); color:var(--acc); font-weight:700; font-size:13px;}
@@ -147,7 +147,6 @@ input[type=number]:focus{border-color:var(--acc);}
 .legal table{border-collapse:collapse; width:100%; min-width:520px; font-size:14px;}
 .legal th,.legal td{text-align:left; vertical-align:top; padding:9px 10px; border-bottom:1px solid var(--border);}
 .legal th{color:var(--mut); font-weight:600;}
-mark.todo{background:#ffe48a; color:#3d2a00; padding:1px 4px; border-radius:4px; font-weight:600;}
 
 @media (max-width:560px){
   .wrap{padding-inline:16px;}

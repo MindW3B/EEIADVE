@@ -1,8 +1,5 @@
 /*!
- * Calculateur d'empreinte environnementale de l'IA en entreprise
- * Synthèse des résultats, partagée par les deux pages et par les fonctions d'envoi d'email (api/)
- * Mind W3B, méthode v1 (octobre 2026)
- * https://www.mindw3b.co/
+ * Calculateur d'empreinte de l'IA, Mind W3B : synthèse des résultats (pages et api/)
  */
 (function(root){
 "use strict";
@@ -21,7 +18,7 @@ function formats(expert){
 function lib(list,id){ var x=list.find(function(o){return o.id===id;}); return x?x.n:''; }
 
 /* ---------- Nettoyage des données reçues ---------- */
-// Les fonctions d'envoi recalculent tout à partir des réponses : rien de ce que renvoie le navigateur n'est recopié tel quel.
+// Les fonctions api/ recalculent tout à partir des réponses : rien de ce qu'envoie le navigateur n'est recopié tel quel.
 function borne(v,max,def){ var x=parseFloat(v); return isNaN(x)||x<0?(def||0):Math.min(x,max); }
 function choix(v,ok){ return ok.indexOf(v)>=0?v:''; }
 function ids(list){ return list.map(function(o){return o.id;}); }
@@ -68,6 +65,7 @@ var NOTE='Estimation indicative, méthode Mind W3B v1. La taille des modèles d\
 function syntheseSimple(a){
   var r=M.estimationSimple(a), users=M.num(a.users);
   if(!a.outils.length||users<=0||!(r.kg>0)) return null;
+  var v=M.voiture(r.kg);
   var rep=[['Utilisateurs de l\'IA',nf(users,0)],['Outils',a.outils.map(function(id){return lib(M.OUTILS,id);}).join(', ')],['Fréquence',LIB.frequence[a.frequence]]];
   if(M.num(a.budget)>0) rep.push(['Budget IA mensuel',nf(M.num(a.budget),0)+' €']);
   ['abonnement','reflexion','documents','europe'].forEach(function(k){
@@ -77,9 +75,9 @@ function syntheseSimple(a){
   return {
     mode:'simple', periode:'par an',
     principal:{label:'Émissions de CO₂ par an',valeur:fC(r.kg),detail:'Entre '+fC(r.lo)+' et '+fC(r.hi)+' · précision '+r.precision.toLowerCase()},
-    indicateurs:[['Par utilisateur',sig(r.kg/users)+' kg CO₂e par an'],['Équivalent voiture',sig(r.kg/0.2/1550)+' allers-retours Paris–Marseille'],
+    indicateurs:[['Par utilisateur',sig(r.kg/users)+' kg CO₂e par an'],['Équivalent voiture',v.ar? sig(v.ar)+' '+(v.ar<1.95?'aller-retour':'allers-retours')+' Paris–Marseille' : nf(v.km,0)+' km en voiture'],
       ['Électricité',fE(r.kwh)+' par an'],['Eau',fW(r.l)+' par an'],['Requêtes',nf(Math.round(r.req),0)+' par an']],
-    gain:'En optimisant vos usages, cette empreinte peut baisser d\'environ '+r.gain+' %, et votre facture IA baisse en même temps.',
+    gain:'En optimisant vos usages, cette empreinte peut baisser d\'environ '+r.gain+' % selon nos simulations, et votre facture IA baisse en même temps.',
     reponsesTitre:'Vos réponses', reponses:rep, note:NOTE
   };
 }
@@ -118,7 +116,7 @@ function texte(sy){
   if(sy.gain) t+='\n'+sy.gain+'\n';
   t+='\n'+sy.reponsesTitre+' :\n';
   sy.reponses.forEach(function(x){ t+='- '+x[0]+' : '+x[1]+'\n'; });
-  return (t+'\n'+sy.note+'\nhttps://calculateur.mindw3b.co/\n').replace(/[  ]/g,' ');
+  return (t+'\n'+sy.note+'\n'+M.SITE+'\n').replace(/[  ]/g,' ');
 }
 
 // mode : 'simple' ou 'expert' ; donnees : réponses (simple) ou état complet (expert).
