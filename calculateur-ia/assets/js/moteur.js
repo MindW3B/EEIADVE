@@ -6,7 +6,7 @@
 "use strict";
 
 // Adresse publique du site. Pour la changer partout : ./changer-adresse.sh à la racine du dépôt.
-var SITE='https://eeiadve-calculateur-ia.vercel.app/';
+var SITE='https://mindw3b-calculateur.vercel.app/';
 
 /* ---------- Référentiels ---------- */
 var MODELS=[

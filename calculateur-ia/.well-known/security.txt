@@ -1,4 +1,4 @@
-Contact: https://eeiadve-calculateur-ia.vercel.app/confidentialite
+Contact: https://mindw3b-calculateur.vercel.app/confidentialite
 Expires: 2027-10-08T00:00:00.000Z
 Preferred-Languages: fr, en
-Canonical: https://eeiadve-calculateur-ia.vercel.app/.well-known/security.txt
+Canonical: https://mindw3b-calculateur.vercel.app/.well-known/security.txt
