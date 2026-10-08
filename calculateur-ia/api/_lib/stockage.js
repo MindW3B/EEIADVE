@@ -45,4 +45,24 @@ async function supprimer(id) {
   await commande(['ZREM', INDEX, id]);
 }
 
-module.exports = { configure, ajouter, lister, supprimer };
+/* ---------- Compteurs de limite ---------- */
+// Clé dérivée de l'identifiant (adresse IP) par HMAC : l'adresse elle-même n'est jamais écrite dans la base.
+function cleCompteur(nom) {
+  return 'mw3b:limite:' + crypto.createHmac('sha256', JETON).update(nom).digest('hex').slice(0, 32);
+}
+
+// Ajoute 1 au compteur, qui s'efface seul à la fin de la fenêtre. Renvoie la nouvelle valeur.
+async function incrementer(nom, fenetreMs) {
+  const cle = cleCompteur(nom);
+  await commande(['SET', cle, '0', 'PX', String(fenetreMs), 'NX']);
+  const n = await commande(['INCR', cle]);
+  // Clé expirée entre les deux commandes : on remet la durée pour ne jamais garder un compteur sans fin.
+  if (n === 1) await commande(['PEXPIRE', cle, String(fenetreMs)]);
+  return n;
+}
+
+async function lireCompteur(nom) {
+  return Number(await commande(['GET', cleCompteur(nom)])) || 0;
+}
+
+module.exports = { configure, ajouter, lister, supprimer, incrementer, lireCompteur };

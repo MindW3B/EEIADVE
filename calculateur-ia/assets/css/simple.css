@@ -141,6 +141,8 @@ input[type=number]:focus{border-color:var(--acc);}
 .legal p{margin:0 0 10px;}
 .legal p:last-child{margin-bottom:0;}
 .legal ul{margin:0; padding-left:20px;}
+.legal .err-act{margin-top:24px; max-width:320px;}
+.legal .err-act .cta{color:#fff;}
 .legal li{margin-bottom:6px;}
 .legal a{color:var(--acc); font-weight:600; overflow-wrap:anywhere;}
 .legal .tbl{overflow-x:auto;}

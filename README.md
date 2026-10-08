@@ -30,7 +30,7 @@ Les formulaires reçus se consultent sur **`/admin`**, protégée par mot de pas
 
 Les saisies restent dans le navigateur de l'utilisateur (localStorage) tant qu'il n'envoie pas l'un de ces formulaires. Les fonctions recalculent la synthèse à partir des réponses, avec le même moteur que les pages : aucun texte de synthèse venant du navigateur n'est enregistré tel quel.
 
-Protections contre les abus : champ piège invisible, délai minimum avant envoi, vérification de l'origine de la requête, limite d'envois par IP (5 demandes d'audit et 8 synthèses toutes les 10 minutes) (compteurs en mémoire, approximatifs sur Vercel). Sur `/admin` : 10 essais de mot de passe par IP et par quart d'heure.
+Protections contre les abus : champ piège invisible, délai minimum avant envoi, vérification de l'origine de la requête, limite d'envois par IP (5 demandes d'audit et 8 synthèses toutes les 10 minutes) (compteurs partagés dans la base Redis, clés dérivées de l'IP par HMAC, effacées au bout de 10 à 15 minutes ; compteur en mémoire si la base ne répond pas). Sur `/admin` : au-delà de 10 essais de mot de passe ratés par IP et par quart d'heure, le mot de passe n'est plus vérifié.
 
 ## Méthode
 
@@ -54,6 +54,9 @@ Le périmètre s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavesto
 ├── expert.html              Mode expert, servi en /expert
 ├── confidentialite.html     Politique de confidentialité, servie en /confidentialite
 ├── admin.html               Formulaires reçus, servie en /admin (mot de passe)
+├── 404.html                 Page introuvable
+├── robots.txt, sitemap.xml  Indexation par les moteurs de recherche
+├── .well-known/security.txt Contact pour signaler une faille
 ├── api/
 │   ├── audit.js             POST /api/audit : enregistre une demande d'audit
 │   ├── synthese.js          POST /api/synthese : enregistre l'email laissé pour télécharger la synthèse
@@ -71,6 +74,7 @@ Le périmètre s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavesto
 │   ├── js/rapport.js        Synthèse en PDF (canvas puis PDF, sans dépendance)
 │   ├── js/contact.js        Fenêtres de synthèse et d'audit
 │   ├── js/admin.js          Page /admin
+│   ├── js/email.js          Adresse de contact assemblée dans la page (jamais en clair)
 │   ├── css/fonts.css        Déclaration des polices hébergées
 │   ├── fonts/               Sora et Manrope (woff2, licence SIL OFL)
 │   └── img/                 Logo, favicon, image de partage

@@ -5,6 +5,7 @@
 'use strict';
 require('../../assets/js/moteur.js');
 require('../../assets/js/synthese.js');
+const base = require('./stockage.js');
 
 const MW3B = globalThis.MW3B;
 
@@ -52,16 +53,36 @@ async function controler(req, res, delaiMin) {
 }
 
 /* ---------- Limite d'envois ---------- */
-// Compteur en mémoire, propre à chaque instance : il freine les abus sans les bloquer totalement.
+// Compteurs partagés par toutes les instances, dans la base Redis.
+// Si la base ne répond pas, repli sur un compteur en mémoire, propre à chaque instance.
 const compteurs = new Map();
-function limiter(cle, max, fenetreMs) {
+function recents(cle, fenetreMs) {
   const maintenant = Date.now();
-  const liste = (compteurs.get(cle) || []).filter((t) => maintenant - t < fenetreMs);
-  if (liste.length >= max) { compteurs.set(cle, liste); return false; }
+  return (compteurs.get(cle) || []).filter((t) => maintenant - t < fenetreMs);
+}
+function limiterMemoire(cle, max, fenetreMs) {
+  const maintenant = Date.now();
+  const liste = recents(cle, fenetreMs);
   liste.push(maintenant);
   compteurs.set(cle, liste);
   if (compteurs.size > 5000) for (const [k, v] of compteurs) if (!v.some((t) => maintenant - t < 3600e3)) compteurs.delete(k);
-  return true;
+  return liste.length <= max;
+}
+
+// Compte un envoi (ou un essai raté) et renvoie false au-delà de max dans la fenêtre.
+async function limiter(cle, max, fenetreMs) {
+  if (base.configure()) {
+    try { return (await base.incrementer(cle, fenetreMs)) <= max; } catch (e) { console.error('Limite :', e.message); }
+  }
+  return limiterMemoire(cle, max, fenetreMs);
+}
+
+// Vrai si max est déjà atteint, sans rien compter.
+async function bloque(cle, max, fenetreMs) {
+  if (base.configure()) {
+    try { return (await base.lireCompteur(cle)) >= max; } catch (e) { console.error('Limite :', e.message); }
+  }
+  return recents(cle, fenetreMs).length >= max;
 }
 
 /* ---------- Champs ---------- */
@@ -78,7 +99,7 @@ function emailValide(v) {
 
 function calculer(corps) {
   const mode = corps.mode === 'expert' ? 'expert' : 'simple';
-  return MW3B.synthese(mode, corps.donnees);
+  try { return MW3B.synthese(mode, corps.donnees); } catch (e) { console.error('Calcul :', e.message); return null; }
 }
 
-module.exports = { repondre, controler, ip, limiter, texteCourt, texteLong, emailValide, calculer };
+module.exports = { repondre, controler, ip, limiter, bloque, texteCourt, texteLong, emailValide, calculer };

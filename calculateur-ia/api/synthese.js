@@ -13,7 +13,7 @@ module.exports = async function (req, res) {
 
   const email = L.emailValide(corps.email);
   if (!email) return L.repondre(res, 400, { ok: false, erreur: 'Cette adresse email ne semble pas valide.' });
-  if (!L.limiter('s-ip:' + L.ip(req), 8, 10 * 60e3)) {
+  if (!await L.limiter('s-ip:' + L.ip(req), 8, 10 * 60e3)) {
     return L.repondre(res, 429, { ok: false, erreur: 'Trop de demandes en peu de temps. Réessayez un peu plus tard.' });
   }
   const sy = L.calculer(corps);

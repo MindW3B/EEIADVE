@@ -3,7 +3,7 @@
  */
 (function(){
 "use strict";
-var M=window.MW3B, CONTACT='nolan.nabeth@mindw3b.co';
+var M=window.MW3B, CONTACT=['nolan.nabeth','mindw3b.co'].join('\u0040'); // pas d'adresse en clair dans le code servi
 var POLITIQUE='<a href="/confidentialite" target="_blank" rel="noopener">politique de confidentialité</a>';
 var PIEGE='<div class="dlg-hp" aria-hidden="true"><label>Site web <input type="text" name="site_web" tabindex="-1" autocomplete="off"></label></div>';
 var FERMER='<button type="button" class="dlg-x" data-fermer aria-label="Fermer"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>';

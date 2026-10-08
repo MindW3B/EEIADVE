@@ -21,7 +21,7 @@ module.exports = async function (req, res) {
   if (!d.email) return L.repondre(res, 400, { ok: false, erreur: 'Cette adresse email ne semble pas valide.' });
   if (d.tel && !/^[\d\s+().-]{6,30}$/.test(d.tel)) return L.repondre(res, 400, { ok: false, erreur: 'Ce numéro de téléphone ne semble pas valide.' });
   if (corps.consentement !== true) return L.repondre(res, 400, { ok: false, erreur: 'Cochez la case de consentement pour envoyer votre demande.' });
-  if (!L.limiter('a-ip:' + L.ip(req), 5, 10 * 60e3)) {
+  if (!await L.limiter('a-ip:' + L.ip(req), 5, 10 * 60e3)) {
     return L.repondre(res, 429, { ok: false, erreur: 'Trop d\'envois en peu de temps. Réessayez un peu plus tard.' });
   }
   const sy = L.calculer(corps);

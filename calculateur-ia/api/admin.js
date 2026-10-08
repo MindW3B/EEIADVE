@@ -20,10 +20,12 @@ function autorise(req) {
 module.exports = async function (req, res) {
   res.setHeader('X-Robots-Tag', 'noindex');
   const cle = 'adm:' + L.ip(req);
+  // Au-delà de 10 essais ratés par quart d'heure, le mot de passe n'est même plus vérifié.
+  if (await L.bloque(cle, 10, 15 * 60e3)) return L.repondre(res, 429, { ok: false, erreur: 'Trop d\'essais. Réessayez dans un quart d\'heure.' });
   if (!autorise(req)) {
-    // Chaque essai raté compte : 10 essais par quart d'heure au plus.
-    if (!L.limiter(cle, 10, 15 * 60e3)) return L.repondre(res, 429, { ok: false, erreur: 'Trop d\'essais. Réessayez dans un quart d\'heure.' });
-    return L.repondre(res, 401, { ok: false, erreur: process.env.ADMIN_PASSWORD ? 'Mot de passe incorrect.' : 'La variable ADMIN_PASSWORD n\'est pas définie sur Vercel.' });
+    if (!process.env.ADMIN_PASSWORD) console.error('Admin : la variable ADMIN_PASSWORD n\'est pas définie.');
+    await L.limiter(cle, 10, 15 * 60e3);
+    return L.repondre(res, 401, { ok: false, erreur: 'Mot de passe incorrect.' });
   }
   if (!base.configure()) return L.repondre(res, 500, { ok: false, erreur: 'La base de données n\'est pas reliée au projet (variables KV_REST_API_URL et KV_REST_API_TOKEN absentes).' });
   try {
