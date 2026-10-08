@@ -1,7 +1,7 @@
 #!/bin/sh
 # Remplace l'adresse publique du calculateur dans tout le dépôt
 # (balises canonical et og des pages, synthèse, PDF, README, LICENSE).
-# Usage : ./changer-adresse.sh calculateur.mindw3b.co
+# Usage : ./changer-adresse.sh nouvelle-adresse.exemple.fr
 set -e
 cd "$(dirname "$0")"
 nouvelle=${1:?"Usage : $0 nouvelle-adresse (sans https://)"}
