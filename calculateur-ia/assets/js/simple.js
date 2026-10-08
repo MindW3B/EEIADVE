@@ -1,8 +1,5 @@
 /*!
- * Calculateur d'empreinte environnementale de l'IA en entreprise
- * Version simple (dirigeants)
- * Mind W3B, méthode v1 (octobre 2026)
- * https://www.mindw3b.co/
+ * Calculateur d'empreinte de l'IA, Mind W3B : version simple
  */
 (function(){
 "use strict";
@@ -20,7 +17,7 @@ function save(){ try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
 
 /* ---------- Formatage ---------- */
 function nf(n,d){return n.toLocaleString('fr-FR',{maximumFractionDigits:d,minimumFractionDigits:0});}
-function sig(n){ var a=Math.abs(n); return nf(n,a>=100?0:a>=10?1:a>=1?1:2); }
+function sig(n){ var a=Math.abs(n); return nf(n,a>=100?0:a>=1?1:2); }
 function co2(kg){ return kg>=1000? [sig(kg/1000),'t'] : [sig(kg),'kg']; }
 function j(a){return a[0]+'\u00a0'+a[1];}
 
@@ -81,14 +78,15 @@ $('toExpert').addEventListener('click',function(e){
   window.location.href=this.getAttribute('href');
 });
 
-/* ---------- Synthèse et audit : assets/js/contact.js ---------- */
+// Lu par contact.js pour la synthèse et l'audit.
 M.etatCourant=function(){ return {mode:'simple',donnees:state}; };
 
 /* ---------- Résultat ---------- */
+var NB_FACULTATIVES=document.querySelectorAll('#morePanel .q').length;
 function update(){
   syncButtons();
   var users=M.num(state.users), r=M.estimationSimple(state);
-  $('moreCount').textContent=r.repondues+' / 5 répondues';
+  $('moreCount').textContent=r.repondues+' / '+NB_FACULTATIVES+' répondues';
 
   var vide=!state.outils.length||users<=0;
   $('empty').hidden=!vide; $('result').hidden=vide;
@@ -101,7 +99,9 @@ function update(){
     $('rDots').querySelectorAll('i').forEach(function(d,i){ d.classList.toggle('on',i<r.points); });
     $('rPrec').textContent=r.precision;
     $('tUser').textContent=sig(r.kg/users);
-    $('tTrip').textContent=sig(r.kg/0.2/1550);
+    var v=M.voiture(r.kg);
+    $('tTrip').textContent=v.ar? sig(v.ar) : nf(v.km,0)+'\u00a0km';
+    $('tTripLab').textContent=v.ar? (v.ar<1.95?'aller-retour':'allers-retours')+' Paris–Marseille en voiture' : 'en voiture';
     $('rGain').textContent=r.gain+'\u00a0%';
     $('dE').textContent=r.kwh>=1000? sig(r.kwh/1000)+' MWh par an' : sig(r.kwh)+' kWh par an';
     $('dW').textContent=r.l>=1000? sig(r.l/1000)+' m³ par an' : nf(Math.round(r.l),0)+' litres par an';

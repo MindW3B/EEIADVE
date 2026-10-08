@@ -1,14 +1,11 @@
 /*!
- * Calculateur d'empreinte environnementale de l'IA en entreprise
- * Mind W3B, méthode v1 (octobre 2026)
- * https://www.mindw3b.co/
+ * Calculateur d'empreinte de l'IA, Mind W3B : mode expert
  */
 (function(){
 "use strict";
 var KEY='mw3b-empreinte-ia-v1';
 function $(id){return document.getElementById(id);}
 
-/* ---------- Référentiels et calcul : assets/js/moteur.js ---------- */
 var M=window.MW3B, MODELS=M.MODELS, OPS=M.OPS, GRIDS=M.GRIDS, HYP_DEF=M.HYP_DEF, num=M.num;
 
 function newUc(o){
@@ -37,8 +34,6 @@ function fE(kwh){ return kwh>=1000? [sig(kwh/1000),'MWh'] : kwh>=1? [sig(kwh),'k
 function fC(kg){ return kg>=1000? [sig(kg/1000),'t CO₂e'] : kg>=1? [sig(kg),'kg CO₂e'] : [sig(kg*1000),'g CO₂e']; }
 function fW(l){ return l>=1000? [sig(l/1000),'m³'] : [sig(l),'L']; }
 function j(a){return a[0]+' '+a[1];}
-
-function compute(lv){ return M.compute(state,lv); }
 
 /* ---------- Rendu des usages ---------- */
 function opts(list,sel,label){
@@ -121,13 +116,12 @@ var PARTS=[['gpu','Calcul GPU','var(--mag)'],['srv','Serveur hors GPU et veille'
 function setRange(id,lo,mid,hi,f){
   var r=$('r'+id), max=hi||1;
   r.querySelector('.seg').style.left=(lo/max*100)+'%';
-  r.querySelector('.seg').style.right='0%';
   r.querySelector('.dot').style.left=(mid/max*100)+'%';
   $('l'+id).textContent='Basse '+j(f(lo));
   $('h'+id).textContent='Haute '+j(f(hi));
 }
 function update(){
-  var p=state.period, res=compute(state.lv), base=compute({inR:0,outR:0,route:0});
+  var p=state.period, res=M.compute(state,state.lv), base=M.compute(state,{inR:0,outR:0,route:0});
   var lo=res[0], c=res[1], hi=res[2];
   document.querySelectorAll('.period button').forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.p===p));});
   LV.forEach(function(l){$(l[1]).textContent=Math.round(state.lv[l[2]]*100)+' %';});
@@ -162,7 +156,7 @@ function update(){
   save();
 }
 
-/* ---------- Synthèse et audit : assets/js/contact.js ---------- */
+// Lu par contact.js pour la synthèse et l'audit.
 M.etatCourant=function(){ return {mode:'expert',donnees:state}; };
 
 $('resetBtn').addEventListener('click',function(){

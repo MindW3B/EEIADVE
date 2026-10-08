@@ -1,6 +1,5 @@
 /*!
- * Thème clair / sombre, partagé entre la version simple et le mode expert
- * Mind W3B
+ * Calculateur d'empreinte de l'IA, Mind W3B : thème clair ou sombre
  */
 (function(){
 "use strict";

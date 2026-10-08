@@ -4,6 +4,11 @@
 
 - Mesure d'audience avec Vercel Web Analytics sur les pages publiques (sans cookie, `/admin` exclue).
 - Politique de confidentialité complétée : section « Mesure d'audience », rôle de Vercel et durée de conservation des statistiques.
+- Équivalent voiture affiché en kilomètres en dessous d'un aller-retour Paris–Marseille.
+- Compteur des questions facultatives sur 6, comme annoncé.
+- Gain affiché « selon nos simulations ».
+- Adresse du site centralisée (`SITE` dans `moteur.js`, script `changer-adresse.sh`), provisoirement sur eeiadve-calculateur-ia.vercel.app.
+- Nettoyage du code : styles et exports inutilisés retirés, commentaires harmonisés.
 
 ## v1.2.0 (octobre 2026)
 

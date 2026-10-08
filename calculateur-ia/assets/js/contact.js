@@ -1,8 +1,5 @@
 /*!
- * Calculateur d'empreinte environnementale de l'IA en entreprise
- * Formulaire « Faire auditer vos usages » et synthèse en PDF, partagés par les deux pages
- * Mind W3B
- * https://www.mindw3b.co/
+ * Calculateur d'empreinte de l'IA, Mind W3B : fenêtres d'audit et de synthèse PDF
  */
 (function(){
 "use strict";
@@ -45,7 +42,7 @@ var HTML={
     '<form class="dlg-form">'+
       '<p class="dlg-pdf" aria-hidden="true"><span>PDF</span></p>'+
       '<h2 id="dlg-synthese-t">Recevez votre synthèse en PDF</h2>'+
-      '<p class="dlg-sub">Un récapitulatif clair de votre résultat et de vos réponses, aux couleurs de Mind W3B, à garder ou à partager en interne.</p>'+
+      '<p class="dlg-sub">Un récapitulatif de votre résultat et de vos réponses, aux couleurs de Mind W3B, à garder ou à partager en interne.</p>'+
       champ('s-email','Votre email professionnel','email','autocomplete="email" maxlength="254" placeholder="vous@entreprise.fr" required autofocus')+
       PIEGE+
       '<label class="dlg-check"><input type="checkbox" name="actualites"><span>Je souhaite aussi recevoir les actualités de Mind W3B (facultatif, désinscription à tout moment).</span></label>'+
@@ -172,7 +169,7 @@ document.addEventListener('click',function(e){
   var b=e.target.closest&&e.target.closest('[data-contact]');
   if(b&&!b.disabled) ouvrir(b.dataset.contact);
 });
-// Lien « Faire auditer vos usages » de l'email de synthèse : /#audit
+// Lien direct vers le formulaire d'audit : /#audit
 if(location.hash==='#audit'){
   try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){}
   ouvrir('audit');

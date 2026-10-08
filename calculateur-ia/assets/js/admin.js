@@ -1,6 +1,5 @@
 /*!
- * Calculateur d'empreinte de l'IA : consultation des formulaires reçus (page /admin)
- * Mind W3B
+ * Calculateur d'empreinte de l'IA, Mind W3B : formulaires reçus (/admin)
  */
 (function(){
 "use strict";
