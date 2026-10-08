@@ -2,6 +2,8 @@
 
 ## Non publié
 
+- Page 404 aux couleurs du site, `robots.txt` et `sitemap.xml`.
+- Adresse email de contact assemblée dans le navigateur : plus jamais en clair dans le code servi.
 - Sécurité : la limite d'essais sur `/admin` bloque désormais vraiment la vérification du mot de passe ; compteurs d'envois partagés dans la base Redis (IP jamais stockée en clair) au lieu de la mémoire de chaque instance.
 - En-têtes HTTP renforcés (HSTS, COOP, CSP `object-src 'none'` et `upgrade-insecure-requests`) et fichier `/.well-known/security.txt`.
 - Mesure d'audience avec Vercel Web Analytics sur les pages publiques (sans cookie, `/admin` exclue).

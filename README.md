@@ -54,6 +54,9 @@ Le périmètre s'inspire des travaux publics d'Impact'IA (SNCF, Resilio, Wavesto
 ├── expert.html              Mode expert, servi en /expert
 ├── confidentialite.html     Politique de confidentialité, servie en /confidentialite
 ├── admin.html               Formulaires reçus, servie en /admin (mot de passe)
+├── 404.html                 Page introuvable
+├── robots.txt, sitemap.xml  Indexation par les moteurs de recherche
+├── .well-known/security.txt Contact pour signaler une faille
 ├── api/
 │   ├── audit.js             POST /api/audit : enregistre une demande d'audit
 │   ├── synthese.js          POST /api/synthese : enregistre l'email laissé pour télécharger la synthèse
