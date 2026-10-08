@@ -2,6 +2,8 @@
 
 ## Non publié
 
+- Sécurité : la limite d'essais sur `/admin` bloque désormais vraiment la vérification du mot de passe ; compteurs d'envois partagés dans la base Redis (IP jamais stockée en clair) au lieu de la mémoire de chaque instance.
+- En-têtes HTTP renforcés (HSTS, COOP, CSP `object-src 'none'` et `upgrade-insecure-requests`) et fichier `/.well-known/security.txt`.
 - Mesure d'audience avec Vercel Web Analytics sur les pages publiques (sans cookie, `/admin` exclue).
 - Politique de confidentialité complétée : section « Mesure d'audience », rôle de Vercel et durée de conservation des statistiques.
 - Équivalent voiture affiché en kilomètres en dessous d'un aller-retour Paris–Marseille.
